@@ -7,8 +7,10 @@ Einstieg: `bachelorarbeit.typ`. Das Projekt benötigt keine externen Typst-Paket
 Im übergeordneten Projektordner:
 
 ```sh
-typst compile typst/bachelorarbeit.typ output/pdf/bachelorarbeit-typst.pdf
+make
 ```
+
+`make` (oder `make watch`) kompiliert sofort und danach automatisch bei Änderungen, auch in eingebundenen Kapiteln, Tabellen und Abbildungen. Mit `Strg+C` beenden. `make build` kompiliert einmalig. Die Ausgabe liegt unter `output/pdf/bachelorarbeit-typst.pdf`.
 
 Alternativ im Ordner `typst`:
 

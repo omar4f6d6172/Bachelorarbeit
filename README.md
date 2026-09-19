@@ -13,7 +13,11 @@ Untersuchung von Watchdog- und Recovery-Strategien für ein robustes eingebettet
 Mit Typst 0.14.2 oder einer kompatiblen Version aus dem Repository-Verzeichnis:
 
 ```sh
-typst compile typst/bachelorarbeit.typ output/pdf/bachelorarbeit-typst.pdf
+make
 ```
+
+`make` oder `make watch` kompiliert sofort und aktualisiert die PDF bei Änderungen an den Typst-Dateien und eingebundenen Dateien automatisch. Mit `Strg+C` beenden. Die Ausgabe liegt unter `output/pdf/bachelorarbeit-typst.pdf`.
+
+Für eine einmalige Kompilierung: `make build`. Voraussetzung sind `make` und `typst` im Suchpfad.
 
 Das Projekt benötigt keine externen Typst-Pakete. Text, Tabellen, Formeln und Quelltextblöcke sind bearbeitbar; die Abbildungen wurden aus der Vorlage übernommen.
