@@ -1,6 +1,6 @@
 #import "../layout.typ": echtetabelle
 
-#echtetabelle("Tabelle 3.2: Nichtfunktionale Anforderungen", (0.6fr, 4fr),
+#echtetabelle("Nichtfunktionale Anforderungen", key: <tab-3-2>, (0.6fr, 4fr),
   ([ID], [Anforderung],),
   (
     [NFA-01], [Ein Fehler einer Teilfunktion darf andere funktionsfähige Teilfunktionen nicht unnötig stoppen.],

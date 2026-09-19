@@ -2,10 +2,10 @@
 
 #table(columns: (23mm, 1fr), stroke: none, inset: (y: 4pt, x: 0pt),
 [API], [Application Programming Interface],
+[BOR], [Brown-out Reset],
 [CRC], [Cyclic Redundancy Check],
 [GPIO], [General Purpose Input/Output],
 [HTTP(S)], [Hypertext Transfer Protocol (Secure)],
-[BOR], [Brown-out Reset],
 [I2C], [Inter-Integrated Circuit],
 [ICMP], [Internet Control Message Protocol],
 [IWDG], [Independent Watchdog],

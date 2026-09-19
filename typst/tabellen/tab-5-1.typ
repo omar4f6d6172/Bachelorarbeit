@@ -1,6 +1,6 @@
 #import "../layout.typ": echtetabelle
 
-#echtetabelle("Tabelle 5.1: Hardwarekomponenten des Versuchsaufbaus", (1.6fr, 3fr),
+#echtetabelle("Hardwarekomponenten des Versuchsaufbaus", key: <tab-5-1>, (1.6fr, 3fr),
   ([Komponente], [Funktion],),
   (
     [Raspberry Pi 4 Model B], [Positionsverarbeitung, Wetterabfrage, Dienstverwaltung, Fehlerbehandlung und Kommunikation mit dem STM32],

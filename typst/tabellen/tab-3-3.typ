@@ -1,6 +1,6 @@
 #import "../layout.typ": echtetabelle
 
-#echtetabelle("Tabelle 3.3: Fehlermodell und vorgesehene Recovery-Strategien", (1.3fr, 1fr, 1.5fr, 2fr),
+#echtetabelle("Fehlermodell und vorgesehene Recovery-Strategien", key: <tab-3-3>, (1.3fr, 1fr, 1.5fr, 2fr),
   ([Fehler], [Ebene], [Erkennung], [Recovery],),
   (
     [Ungültige UART-Prüfsumme], [Daten], [Prüfsummenvergleich], [Rahmen verwerfen, Fehlerantwort senden],

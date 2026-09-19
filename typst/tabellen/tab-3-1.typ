@@ -1,6 +1,6 @@
 #import "../layout.typ": echtetabelle
 
-#echtetabelle("Tabelle 3.1: Funktionale Anforderungen", (0.6fr, 4fr),
+#echtetabelle("Funktionale Anforderungen", key: <tab-3-1>, (0.6fr, 4fr),
   ([ID], [Anforderung],),
   (
     [FA-01], [Das System muss eine gültige GPS-Position erfassen können.],

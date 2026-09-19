@@ -35,6 +35,15 @@ Die gelieferte PDF endet nach dem Literaturverzeichnis. Im ursprünglichen Inhal
 - Bei den Bildtabellen wurden technische Escape-Artefakte vor Unterstrichen in Bezeichnern wie `APP_RUNTIME` entfernt.
 - Abbildungen wurden unverändert inhaltlich übernommen und bei Bedarf von fremden Kopfzeilen befreit. Die ursprünglich im Fließtext platzierten Abbildungen wurden teils an die zugehörigen vollständigen Absätze verschoben.
 
-## Prüfung
+## Prüfung der ursprünglichen Übertragung
 
 Die Typst-Datei wurde erfolgreich kompiliert. Geprüft wurden die vollständige Seitenübersicht, ausgewählte Seiten in Originalgröße, Verzeichnisse, Tabellen, Formeln, Codeblöcke und das Literaturverzeichnis. Alle 28 Literatureinträge und neun Abbildungen sind enthalten. Es wurden keine über den Seitenrand reichenden Textblöcke festgestellt. Die hier beschriebenen Textlücken sind bereits in der Vorlage vorhanden.
+
+
+## Anschließende Gestaltungsüberarbeitung
+
+Das klassische digitale Layout, automatische Verweise und die acht nativen Diagramme
+sind in `README.md` beschrieben. Die PNG-Originale bleiben als Referenz erhalten;
+der Terminal-Screenshot wird mit einem Sichtfenster ohne eingebrannte Bildunterschrift
+angezeigt. Diese Layoutänderungen beseitigen keine der oben dokumentierten Textlücken.
+Die noch zu bearbeitenden Abgabepunkte stehen separat in `OFFENE_ABGABEPUNKTE.md`.

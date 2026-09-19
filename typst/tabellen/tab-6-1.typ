@@ -1,6 +1,6 @@
 #import "../layout.typ": echtetabelle
 
-#echtetabelle("Tabelle 6.1: Zuordnung der untersuchten Fehlerklassen zu Recovery-Ebenen", (1.4fr, 1.4fr, 2fr),
+#echtetabelle("Zuordnung der untersuchten Fehlerklassen zu Recovery-Ebenen", key: <tab-6-1>, (1.4fr, 1.4fr, 2fr),
   ([Fehlerklasse], [Strategie], [Interpretation in der Arbeit],),
   (
     [Ungültige Prüfsumme / Pufferüberlauf], [Rahmen verwerfen bzw. Empfänger synchronisieren], [Fehler bleibt auf Protokollebene isoliert.],

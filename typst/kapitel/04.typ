@@ -3,15 +3,15 @@
 // Vorlage: PDF-Seite 29
 = Implementierung <sec-4>
 
-Kapitel 3 hat die logische Architektur und die Recovery-Grenzen festgelegt. Dieses Kapitel folgt demselben Datenpfad und beschreibt die konkrete Umsetzung der Schnittstellen, Dienste und Überwachungsmechanismen.
+#ref(<sec-3>, supplement: [Kapitel]) hat die logische Architektur und die Recovery-Grenzen festgelegt. Dieses Kapitel folgt demselben Datenpfad und beschreibt die konkrete Umsetzung der Schnittstellen, Dienste und Überwachungsmechanismen.
 
 // Vorlage: PDF-Seite 29
 == Hardwareaufbau <sec-4-1>
 
 // VORLAGE PDF S. 29: Der rechte Seitenrand schneidet STM32 auf ST ab.
-Der Hardwareaufbau setzt den in Abbildung 3.1 beschriebenen Datenpfad physisch um: Der GPS-Empfänger ist per USB mit dem Raspberry Pi verbunden, Raspberry Pi und STM32 kommunizieren über UART und der ST steuert das LCD über I2C. Tabelle 4.1 fasst die dafür relevanten Schnittstellen und Parameter zusammen.
+Der Hardwareaufbau setzt den in #ref(<abb-3-1>, supplement: [Abbildung]) beschriebenen Datenpfad physisch um: Der GPS-Empfänger ist per USB mit dem Raspberry Pi verbunden, Raspberry Pi und STM32 kommunizieren über UART und der ST steuert das LCD über I2C. #ref(<tab-4-1>, supplement: [Tabelle]) fasst die dafür relevanten Schnittstellen und Parameter zusammen.
 
-#echtetabelle("Tabelle 4.1: Wesentliche Schnittstellen und Konfigurationswerte", (1.3fr, 1.4fr, 2.4fr), ([Funktion], [Anschluss], [Konfiguration],), (
+#echtetabelle("Wesentliche Schnittstellen und Konfigurationswerte", key: <tab-4-1>, (1.3fr, 1.4fr, 2.4fr), ([Funktion], [Anschluss], [Konfiguration],), (
   [GPS am Raspberry Pi],
   [/dev/ttyACM0],
   [USB-CDC, 9.600 Bd, NMEA],
@@ -32,7 +32,7 @@ Der Hardwareaufbau setzt den in Abbildung 3.1 beschriebenen Datenpfad physisch u
   [16 MHz],
 ))
 
-Im Versuchsaufbau wurde für den LCD-Adapter ausschließlich die 7-Bit-I2C-Adresse 0x27 verwendet. Die Registerkonfiguration orientiert sich am STM32-Referenzhandbuch \[4, S. 1151-1183, Abschn. 38.1-38.4.10\]. I2C-Zugriffe besitzen Software-Timeouts, damit ein dauerhaft gesetztes BUSY-Flag die Hauptschleife nicht unbegrenzt blockiert.
+Im Versuchsaufbau wurde für den LCD-Adapter ausschließlich die 7-Bit-I2C-Adresse 0x27 verwendet. Die Registerkonfiguration orientiert sich am STM32-Referenzhandbuch \[#quelle(<lit-04>), S. 1151-1183, Abschn. 38.1-38.4.10\]. I2C-Zugriffe besitzen Software-Timeouts, damit ein dauerhaft gesetztes BUSY-Flag die Hauptschleife nicht unbegrenzt blockiert.
 
 // Vorlage: PDF-Seite 29
 == Raspberry-Pi-Softwarearchitektur <sec-4-2>
@@ -77,7 +77,7 @@ Der GPS-Dienst öffnet /dev/ttyACM0, liest RMC-Sätze und akzeptiert nur Datens�
 === Netzwerkdienst <sec-4-2-4>
 
 // VORLAGE PDF S. 31: Am rechten Rand steht ein isoliertes Restzeichen u.
-Der Dienst liest eine aktuelle oder noch zulässige letzte Position und ruft die Open-Meteo- Schnittstelle über HTTPS ab \[17, Abschn. "Weather Forecast API"\]. Für die Fehleranalyse sind drei Ursachen zu unterscheiden: fehlende Netzwerkkonnektivität beziehungsweise DNS/TLS-Fehler, Nichterreichbarkeit oder Fehler des Wetterdienstes sowie eine nicht u auswertbare Antwort. Die aktuelle Implementierung fasst diese Ursachen in weather.json noch zu ok=false mit reason=net\_error zusammen und behandelt sie mit demselben periodischen Retry. Diese Vereinfachung wird bei der Interpretation berücksichtigt.
+Der Dienst liest eine aktuelle oder noch zulässige letzte Position und ruft die Open-Meteo- Schnittstelle über HTTPS ab \[#quelle(<lit-17>), Abschn. "Weather Forecast API"\]. Für die Fehleranalyse sind drei Ursachen zu unterscheiden: fehlende Netzwerkkonnektivität beziehungsweise DNS/TLS-Fehler, Nichterreichbarkeit oder Fehler des Wetterdienstes sowie eine nicht u auswertbare Antwort. Die aktuelle Implementierung fasst diese Ursachen in weather.json noch zu ok=false mit reason=net\_error zusammen und behandelt sie mit demselben periodischen Retry. Diese Vereinfachung wird bei der Interpretation berücksichtigt.
 
 // Vorlage: PDF-Seite 31
 === UART-Dienst und Protokollbildung <sec-4-2-5>
@@ -114,31 +114,31 @@ RestartSec=5
 WatchdogSec=30s
 ```
 
-Die Anwendung liest das von systemd gesetzte WATCHDOG\_USEC und sendet das Lebenszeichen typischerweise nach der halben erlaubten Zeit. Die Keepalive-Funktion wird auch während kontrollierter Wartezeiten aufgerufen, damit ein langer I/O-Timeout nicht fälschlich als Prozess-Hänger gilt. Die Semantik von WATCHDOG=1 entspricht der offiziellen systemd-API \[7, Abschn. WatchdogSec=, 8, Abschn. WATCHDOG=1\].
+Die Anwendung liest das von systemd gesetzte WATCHDOG\_USEC und sendet das Lebenszeichen typischerweise nach der halben erlaubten Zeit. Die Keepalive-Funktion wird auch während kontrollierter Wartezeiten aufgerufen, damit ein langer I/O-Timeout nicht fälschlich als Prozess-Hänger gilt. Die Semantik von WATCHDOG=1 entspricht der offiziellen systemd-API \[#quelle(<lit-07>), Abschn. WatchdogSec=, #quelle(<lit-08>), Abschn. WATCHDOG=1\].
 
 // Vorlage: PDF-Seite 33
 == Hardware-Watchdog des Raspberry Pi <sec-4-4>
 
-systemd übernimmt zusätzlich die periodische Aktualisierung von /dev/watchdog0. Die Einstellung RuntimeWatchdogSec= ist in der systemd-Systemkonfiguration dokumentiert \[20, Abschn. RuntimeWatchdogSec=\]; die Kommunikation mit dem Gerät folgt der Linux- Watchdog-API \[3, Abschn. „The simplest API“\]. Der Versuch verwendet den BCM2835- Watchdog. In der Konfiguration wurde RuntimeWatchdogSec=10s angefordert;
+systemd übernimmt zusätzlich die periodische Aktualisierung von /dev/watchdog0. Die Einstellung RuntimeWatchdogSec= ist in der systemd-Systemkonfiguration dokumentiert \[#quelle(<lit-20>), Abschn. RuntimeWatchdogSec=\]; die Kommunikation mit dem Gerät folgt der Linux- Watchdog-API \[#quelle(<lit-03>), Abschn. „The simplest API“\]. Der Versuch verwendet den BCM2835- Watchdog. In der Konfiguration wurde RuntimeWatchdogSec=10s angefordert;
 
 der aktive Treiber meldete jedoch einen wirksamen Hardware-Timeout von 60 s; der protokollierte wdctl-Auszug ist in Quelltext C.6 wiedergegeben. Der Kernel- Panic-Test prüft nicht nur die Existenz des Geräts, sondern die vollständige Kette aus ausbleibendem Keepalive, Hardware-Reset, Linux-Boot und automatischem Dienststart.
 
 // Vorlage: PDF-Seite 33
 == STM32-Firmwarestruktur <sec-4-5>
 
-Die Firmware ist CMSIS-basiert und in Treiber-, Diagnose- und Anwendungsmodule zerlegt. Zu den Modulen gehören Systemzeit, UART, I2C, LCD2004, Nachrichtenparser, Supervisor, Power-Monitor, Bootdiagnose und IWDG. CMSIS stellt die standardisierten Cortex-M- Kern- und Registerdefinitionen bereit \[21, Abschn. „CMSIS-Core“\]; die Peripherieregister werden direkt konfiguriert.
+Die Firmware ist CMSIS-basiert und in Treiber-, Diagnose- und Anwendungsmodule zerlegt. Zu den Modulen gehören Systemzeit, UART, I2C, LCD2004, Nachrichtenparser, Supervisor, Power-Monitor, Bootdiagnose und IWDG. CMSIS stellt die standardisierten Cortex-M- Kern- und Registerdefinitionen bereit \[#quelle(<lit-21>), Abschn. „CMSIS-Core“\]; die Peripherieregister werden direkt konfiguriert.
 
 // Vorlage: PDF-Seite 33
 === Bootablauf und Diagnose <sec-4-5-1>
 
 Nach dem Reset werden Takt, SysTick, UART, I2C, Power-Monitor und Supervisor initialisiert. Die Bootdiagnose prüft I2C/LCD, UART-Kommunikation und den Watchdog. Zusätzlich werden RCC-Resetflags gelesen und anschließend gelöscht. Die Diagnose unterscheidet unter anderem Pin-, Software- und IWDG-Reset. Erst nach Abschluss wechselt der Supervisor vom Boot- in den Laufzeitmodus.
 
-#vorlage("abb-4-1.png", "Abbildung 4.1: Vereinfachter Boot- und Recovery-Ablauf des STM32", art: "image")
+#vorlage("abb-4-1.png", "Vereinfachter Boot- und Recovery-Ablauf des STM32")
 
 // Vorlage: PDF-Seite 34
 === Supervisor und Gesundheitsmodell <sec-4-5-2>
 
-Der Supervisor verwaltet BOOT, MAIN\_LOOP, UART\_DRIVER, LCD\_DRIVER, RPI\_LINK und POWER\_SUPPLY. Jeder Eintrag enthält Aktivierung, Kritikalität, Gesundheitszustand und Zeitpunkt des letzten Fortschritts. Für kritische Subsysteme gelten Laufzeitgrenzen von typischerweise 3 s; der Raspberry-Pi-Link und das LCD sind nicht kritisch für den IWDG- Refresh. Der globale Modus wird aus den Einzelzuständen abgeleitet. Bei einem bestätigten nicht kritischen Fehler wechselt das System zu DEGRADED. Kritische Fehler verhindern die Freigabe des IWDG-Lebenszeichens. Diagnosebefehle liefern Alter, Zustand und Kritikalität der Subsysteme sowie kumulative Fehler- und Recovery-Zähler. Zusammen mit den Restart- und Watchdog-Zuständen von systemd realisiert diese Logik den in Abbildung 3.4 spezifizierten systemweiten Automaten verteilt über beide Plattformen.
+Der Supervisor verwaltet BOOT, MAIN\_LOOP, UART\_DRIVER, LCD\_DRIVER, RPI\_LINK und POWER\_SUPPLY. Jeder Eintrag enthält Aktivierung, Kritikalität, Gesundheitszustand und Zeitpunkt des letzten Fortschritts. Für kritische Subsysteme gelten Laufzeitgrenzen von typischerweise 3 s; der Raspberry-Pi-Link und das LCD sind nicht kritisch für den IWDG- Refresh. Der globale Modus wird aus den Einzelzuständen abgeleitet. Bei einem bestätigten nicht kritischen Fehler wechselt das System zu DEGRADED. Kritische Fehler verhindern die Freigabe des IWDG-Lebenszeichens. Diagnosebefehle liefern Alter, Zustand und Kritikalität der Subsysteme sowie kumulative Fehler- und Recovery-Zähler. Zusammen mit den Restart- und Watchdog-Zuständen von systemd realisiert diese Logik den in #ref(<abb-3-4>, supplement: [Abbildung]) spezifizierten systemweiten Automaten verteilt über beide Plattformen.
 
 // Vorlage: PDF-Seite 34
 === Independent Watchdog <sec-4-5-3>
@@ -162,7 +162,7 @@ Nach drei erfolgreichen Proben wird das LCD neu initialisiert, der Recovery- Zä
 
 Der STM32-PVD und ein Supervisor-Eintrag POWER\_SUPPLY sind in der Firmware vorbereitet. Die Zustandsänderung wird entprellt und kann als kritisch bewertet werden. Ergänzend wurde das Verhalten der vollständigen Nucleo-Platine bei schrittweise abgesenkter VIN-Spannung untersucht.
 
-Reaktive Verfahren wie Hibernus verwenden eine Spannungsschwelle oberhalb des nicht mehr sicheren Betriebsbereichs, damit vor dem eigentlichen Brown-out noch genügend Restenergie für eine definierte Zustandsaktion verbleibt \[26, S. 15–17\].
+Reaktive Verfahren wie Hibernus verwenden eine Spannungsschwelle oberhalb des nicht mehr sicheren Betriebsbereichs, damit vor dem eigentlichen Brown-out noch genügend Restenergie für eine definierte Zustandsaktion verbleibt \[#quelle(<lit-26>), S. 15–17\].
 
 // Vorlage: PDF-Seite 35
 == Diagnose, Logs und Reproduzierbarkeit <sec-4-6>

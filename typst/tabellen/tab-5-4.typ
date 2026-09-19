@@ -1,6 +1,6 @@
 #import "../layout.typ": echtetabelle
 
-#echtetabelle("Tabelle 5.4: Externe Netzwerknichtverfügbarkeit bei vollständigem Spannungsverlust", (0.8fr, 2fr, 2fr, 0.8fr),
+#echtetabelle("Externe Netzwerknichtverfügbarkeit bei vollständigem Spannungsverlust", key: <tab-5-4>, (0.8fr, 2fr, 2fr, 0.8fr),
   ([Durchlauf], [DOWN], [UP], [Dauer \[s\]],),
   (
     [P1-01], [13.07.2026 03:49:13], [13.07.2026 03:49:46], [33],

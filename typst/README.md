@@ -1,41 +1,50 @@
 # Bachelorarbeit in Typst
 
-Einstieg: `bachelorarbeit.typ`. Das Projekt benötigt keine externen Typst-Pakete und keine Verbindung zum Internet beim Kompilieren.
+Einstieg: `bachelorarbeit.typ`. Klassisches Layout für die digitale PDF-Abgabe, ohne externe Typst-Pakete und ohne Netzwerkzugriff beim Kompilieren.
 
-## Kompilieren
+## Erstellen
 
-Im übergeordneten Projektordner:
-
-```sh
-make
-```
-
-`make` (oder `make watch`) kompiliert sofort und danach automatisch bei Änderungen, auch in eingebundenen Kapiteln, Tabellen und Abbildungen. Mit `Strg+C` beenden. `make build` kompiliert einmalig. Die Ausgabe liegt unter `output/pdf/bachelorarbeit-typst.pdf`.
-
-Alternativ im Ordner `typst`:
+Im Projektordner:
 
 ```sh
-typst compile bachelorarbeit.typ bachelorarbeit.pdf
+make build
 ```
 
-Geprüft mit Typst 0.14.2. Verwendete Schriften: New Computer Modern, Noto Sans und DejaVu Sans Mono.
+Ausgabe: `output/pdf/bachelorarbeit-typst.pdf`. `make` oder `make watch` startet die automatische Neukompilierung; mit `Strg+C` beenden. Geprüft mit Typst 0.14.2. Benötigte Schriften: **Libertinus Serif**, **New Computer Modern Math** (Formeln) und **DejaVu Sans Mono** (Code).
+
+## Gestaltung
+
+- A4, Hochformat, 25 mm Seiten- und oberer Rand, 24 mm unterer Rand.
+- Libertinus Serif, Fließtext 11,5 pt, deutscher Blocksatz, Zeilenzugabe 0,65 em. Diese Typst-Zeilenzugabe ist kein prozentualer Zeilenabstand.
+- Überschriften 19 / 14 / 12 pt; Hauptkapitel beginnen auf neuer Seite.
+- Titelblatt ohne Seitenzahl; Vorseiten römisch und Hauptteil arabisch ab 1. Navigation über PDF-Lesezeichen und anklickbare Verzeichnisse und Verweise.
+- Tabellen und Bildunterschriften 10 pt, Quelltext 8,5 pt ohne farbige Syntaxhervorhebung. Schlusskapitel mit geringfügig kompakterem Absatzsatz, um eine Restseite zu vermeiden.
+- Acht Diagramme als native Schwarz-Weiß-Vektorgrafiken. Sämtliche Zahlen, Übergänge und Beschriftungen können im Typst-Quelltext bearbeitet werden.
 
 ## Dateien
 
-- `bachelorarbeit.typ`: Titelblatt, Satzspiegel, Überschriften, Seitenzählung und automatisch erzeugte Verzeichnisse.
-- `layout.typ`: wiederverwendbare Bausteine für Tabellen, Abbildungen und Literatur.
-- `kapitel/00.typ`: Zusammenfassung.
-- `kapitel/01.typ` bis `07.typ`: die sieben Kapitel mit bearbeitbarem Fließtext. Kommentare verweisen auf die Seiten der Vorlage.
-- `abkuerzungen.typ`: bearbeitbares Abkürzungsverzeichnis.
-- `tabellen/`: aus Bildtabellen rekonstruierte, native Typst-Tabellen. Die Tabellen 3.5, 4.1 und 5.5 stehen unmittelbar in den jeweiligen Kapiteln.
-- `abbildungen/`: neun aus der Vorlage übernommene Abbildungen. Diagramme und Screenshot bleiben Grafiken, deren Beschriftung in der jeweiligen Bilddatei enthalten ist.
-- `literatur.typ`: alle 28 nummerierten Literatureinträge; die angegebenen URLs sind anklickbar.
-- `HINWEISE_ZUR_VORLAGE.md`: Textlücken und technische Besonderheiten der PDF-Vorlage.
+| Datei / Ordner | Aufgabe |
+| --- | --- |
+| `bachelorarbeit.typ` | Titelblatt, Satzregeln, Reihenfolge der Teile, Verzeichnisse und Seitenzählung |
+| `layout.typ` | Abbildungen, Tabellen, Gleichungen, Quellenverweise und automatische Nummerierung |
+| `diagramme.typ` | Acht native Architektur-, Ablauf-, Zustands- und Messdiagramme |
+| `kapitel/00.typ` | Deutsche Zusammenfassung |
+| `kapitel/01.typ` bis `07.typ` | Sieben Kapitel mit bearbeitbarem Fließtext |
+| `abkuerzungen.typ` | Alphabetisches Abkürzungsverzeichnis |
+| `tabellen/` | Native Tabellen; Tabelle 5.2 ist ein zusammenhängender Testkatalog |
+| `abbildungen/` | Unveränderte Originalgrafiken als Referenz; nur der Terminal-Screenshot wird noch eingebunden |
+| `literatur.typ` | 28 Literatureinträge mit stabilen Labels und anklickbaren DOI-/URL-Adressen |
+| `OFFENE_ABGABEPUNKTE.md` | Fehlende Inhalte und Aufgaben vor der Abgabe, außerhalb der Arbeit |
+| `HINWEISE_ZUR_VORLAGE.md` | Dokumentation der ursprünglichen Textlücken und Übertragungsentscheidungen |
 
-## Umfang der Übertragung
+## Nummerierung und Verweise
 
-Übertragen wurden Titelblatt, Zusammenfassung, Abkürzungen, sieben Kapitel, zwölf Tabellen (Tabelle 5.2 in zwei Teilen), neun Abbildungen, fünf Formeln, die vorhandenen Quelltextblöcke und alle 28 Literaturangaben. Fließtext, Tabellen, Formeln und Code sind bearbeitbarer Typst-Inhalt. Die PDF-Seiten wurden nicht als Ganzseitenbilder eingebunden.
+Abbildungen und Tabellen erhalten über `vorlage` beziehungsweise `echtetabelle` eine automatisch erzeugte Kapitelnummer. Gleichungen werden mit `gleichung` gesetzt. Labels wie `<abb-3-1>`, `<tab-5-3>` oder `<sec-3-8>` sind stabile interne IDs; ihre Ziffern sind keine festgeschriebenen Anzeigezahlen. Bestehende Labels bei Umstellungen beibehalten. Im Text `#ref(<tab-5-3>, supplement: [Tabelle])` verwenden.
 
-Überschriftennummerierung, Inhalts-, Abbildungs- und Tabellenverzeichnis sowie Seitenzahlen werden neu erzeugt. Deshalb ändern sich Umbrüche und Seitenzahlen gegenüber der 66-seitigen Vorlage. Die breite Ergebnistabelle 5.3 steht im Querformat. Die fachlichen Zahlenwerte wurden übernommen und nicht neu berechnet.
+Literatureinträge verwenden `#lit(<lit-01>, [Eintrag])`, Zitate beispielsweise `\[#quelle(<lit-01>), S. 13–14\]`. Angezeigt wird die aktuelle Position im Literaturverzeichnis. Die bisherige Reihenfolge und der numerische Zitierstil bleiben erhalten; es gibt keine automatische externe Quellenrecherche oder CSL-Umformatierung.
 
-Die Abschnittsnummern werden automatisch erzeugt. Tabellen-, Abbildungs- und Gleichungsnummern sowie Literaturverweise behalten die Originalbezeichnungen; bei strukturellen Erweiterungen sind diese Bezeichnungen entsprechend anzupassen. Eine fachliche Prüfung oder Quellenrecherche ist nicht Bestandteil dieser Formatübertragung.
+Die native Tabelle 5.3 fasst Szenario und Messgröße in einer Spalte sowie Minimum und Maximum als Intervall zusammen. Messwerte und Stichprobengrößen bleiben erhalten. Im Messdiagramm zur Unterspannung sind die Zustandsklassen ordinal: Abstände und Verbindungslinien stellen keine metrischen Zustandsabstände oder gemessenen Schwellenspannungen dar.
+
+## Inhaltlicher Stand
+
+Die Gestaltung ergänzt keine fehlenden Fachinhalte. Anhänge A–D und Teile von Sätzen fehlen bereits in der Vorlage. Vor der Abgabe die separate Liste `OFFENE_ABGABEPUNKTE.md` bearbeiten.
