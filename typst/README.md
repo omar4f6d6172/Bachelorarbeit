@@ -19,7 +19,7 @@ Ausgabe: `output/pdf/bachelorarbeit-typst.pdf`. `make` oder `make watch` startet
 - Überschriften 19 / 14 / 12 pt; Hauptkapitel beginnen auf neuer Seite.
 - Titelblatt ohne Seitenzahl; Vorseiten römisch und Hauptteil arabisch ab 1. Navigation über PDF-Lesezeichen und anklickbare Verzeichnisse und Verweise.
 - Tabellen und Bildunterschriften 10 pt, Quelltext 8,5 pt ohne farbige Syntaxhervorhebung. Schlusskapitel mit geringfügig kompakterem Absatzsatz, um eine Restseite zu vermeiden.
-- Acht Diagramme als native Schwarz-Weiß-Vektorgrafiken. Sämtliche Zahlen, Übergänge und Beschriftungen können im Typst-Quelltext bearbeitet werden.
+- Acht Diagramme als native, farbige Vektorgrafiken mit einer drucktauglichen akademischen Farbpalette. Sämtliche Zahlen, Übergänge und Beschriftungen können im Typst-Quelltext bearbeitet werden.
 
 ## Dateien
 
