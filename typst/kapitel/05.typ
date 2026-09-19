@@ -3,7 +3,7 @@
 // Vorlage: PDF-Seite 37
 = Evaluation <sec-5>
 
-Dieses Kapitel untersucht, ob die im Rahmen der Arbeit implementierten Watchdogund Recovery-Strategien unterschiedliche Fehlerzustände zuverlässig erkennen, eingrenzen und automatisch beheben. Betrachtet werden Fehler auf mehreren Ebenen: fehlerhafte Kommunikationsdaten, Ausfälle von Peripherie und externen Verbindungen, abgestürzte oder hängende Linux-Dienste, ein Stillstand der Mikrocontroller-Firmware, ein Kernel- Hänger, ein vollständiger Ausfall der Spannungsversorgung sowie kontrolliert abgesenkte Versorgungsspannungen. Das Ziel der Evaluation besteht nicht ausschließlich im Nachweis einer Fehlererkennung. Ein Test gilt erst dann als erfolgreich, wenn der zuvor definierte funktionale Endzustand wieder erreicht wurde. Dazu zählen je nach Testfall beispielsweise ein gültiger GPS-Fix, eine erfolgreiche Wetterabfrage, ein bestätigter UART-Datenrahmen, der Supervisor- Modus NORMAL oder ein automatisch wiederhergestelltes Gesamtsystem.
+Dieses Kapitel untersucht, ob die im Rahmen der Arbeit implementierten Watchdog- und Recovery-Strategien unterschiedliche Fehlerzustände zuverlässig erkennen, eingrenzen und automatisch beheben. Betrachtet werden Fehler auf mehreren Ebenen: fehlerhafte Kommunikationsdaten, Ausfälle von Peripherie und externen Verbindungen, abgestürzte oder hängende Linux-Dienste, ein Stillstand der Mikrocontroller-Firmware, ein Kernel-Hänger, ein vollständiger Ausfall der Spannungsversorgung sowie kontrolliert abgesenkte Versorgungsspannungen. Das Ziel der Evaluation besteht nicht ausschließlich im Nachweis einer Fehlererkennung. Ein Test gilt erst dann als erfolgreich, wenn der zuvor definierte funktionale Endzustand wieder erreicht wurde. Dazu zählen je nach Testfall beispielsweise ein gültiger GPS-Fix, eine erfolgreiche Wetterabfrage, ein bestätigter UART-Datenrahmen, der Supervisor-Modus NORMAL oder ein automatisch wiederhergestelltes Gesamtsystem.
 
 // Vorlage: PDF-Seite 37
 == Zielsetzung und Evaluationsfragen <sec-5-1>
@@ -28,14 +28,14 @@ Die Evaluation beantwortet insbesondere folgende Fragen:
 // Vorlage: PDF-Seite 37
 === Hardwareaufbau <sec-5-2-1>
 
-Der Versuchsaufbau besteht aus einem Raspberry Pi 4 Model B und einem STM32-Nucleo- L432KC-Entwicklungsboard. Der Raspberry Pi übernimmt die Positionsverarbeitung, die Abfrage der Wetterdaten und die Verwaltung der Linux-Dienste. Der STM32 steuert das Display, validiert die UART-Daten und überwacht mehrere interne sowie externe Systemkomponenten. Die Positionsdaten werden mit einem unter der Vertriebsbezeichnung Binghe VK-162 erworbenen USB-GPS-Empfänger erfasst. Das vollständige Gerät wird unter Linux als serielle Schnittstelle /dev/ttyACM0 eingebunden und liefert NMEA-Datensätze mit 9.600 Bd. Die intern erkannte Empfängereinheit meldete sich in den Versuchslogs als ublox-7- beziehungsweise UBX-G70xx-Hardware; die zugehörigen USB- und Startmeldungen sind in Anhang A dokumentiert. Aus den GPRMC-Datensätzen werden Breiten- und Längengrad bestimmt. Die Kommunikation zwischen Raspberry Pi und STM32 erfolgt über eine UART- Verbindung mit 115.200 Bd. Auf dem Raspberry Pi wird /dev/serial0 verwendet. Auf dem STM32 kommt USART1 mit PA9 als TX und PA10 als RX zum Einsatz. Zur Anzeige der Wetter- und Systeminformationen wird ein LCD2004-Modul mit vier Zeilen und jeweils 20 Zeichen verwendet. Der eingesetzte AZDelivery-I2C-Adapter verwendet einen PCF8574-I/O-Expander \[#quelle(<lit-19>), S. 4\]; dessen technische Eigenschaften sind im NXP-Datenblatt dokumentiert \[#quelle(<lit-15>), S. 1 und 5–8\]. Das angeschlossene Zeichenmodul wird über den Adapter als HD44780-basiertes Display angesteuert \[#quelle(<lit-19>), S. 4\]. Im Versuchsaufbau wurde ausschließlich die 7-Bit-Adresse 0x27 bei einer Busfrequenz von 100 kHz verwendet. Für den ergänzenden Unterspannungstest wurde ein Labornetzteil verwendet. Die NUCLEO- L432KC-Platine wurde über VIN und GND versorgt; die eingestellte Spannung wurde in 1-V-Schritten von 8 V bis 2 V abgesenkt. Für die Raspberry-Pi-Beobachtung wurde bei einer Sollspannung von 4,50 V der Status mit vcgencmd get\_throttled abgefragt.
+Der Versuchsaufbau besteht aus einem Raspberry Pi 4 Model B und einem STM32-Nucleo-L432KC-Entwicklungsboard. Der Raspberry Pi übernimmt die Positionsverarbeitung, die Abfrage der Wetterdaten und die Verwaltung der Linux-Dienste. Der STM32 steuert das Display, validiert die UART-Daten und überwacht mehrere interne sowie externe Systemkomponenten. Die Positionsdaten werden mit einem unter der Vertriebsbezeichnung Binghe VK-162 erworbenen USB-GPS-Empfänger erfasst. Das vollständige Gerät wird unter Linux als serielle Schnittstelle /dev/ttyACM0 eingebunden und liefert NMEA-Datensätze mit 9.600 Bd. Die intern erkannte Empfängereinheit meldete sich in den Versuchslogs als ublox-7- beziehungsweise UBX-G70xx-Hardware; die zugehörigen USB- und Startmeldungen sind in Anhang A dokumentiert. Aus den GPRMC-Datensätzen werden Breiten- und Längengrad bestimmt. Die Kommunikation zwischen Raspberry Pi und STM32 erfolgt über eine UART-Verbindung mit 115.200 Bd. Auf dem Raspberry Pi wird /dev/serial0 verwendet. Auf dem STM32 kommt USART1 mit PA9 als TX und PA10 als RX zum Einsatz. Zur Anzeige der Wetter- und Systeminformationen wird ein LCD2004-Modul mit vier Zeilen und jeweils 20 Zeichen verwendet. Der eingesetzte AZDelivery-I2C-Adapter verwendet einen PCF8574-I/O-Expander \[#quelle(<lit-19>), S. 4\]; dessen technische Eigenschaften sind im NXP-Datenblatt dokumentiert \[#quelle(<lit-15>), S. 1 und 5–8\]. Das angeschlossene Zeichenmodul wird über den Adapter als HD44780-basiertes Display angesteuert \[#quelle(<lit-19>), S. 4\]. Im Versuchsaufbau wurde ausschließlich die 7-Bit-Adresse 0x27 bei einer Busfrequenz von 100 kHz verwendet. Für den ergänzenden Unterspannungstest wurde ein Labornetzteil verwendet. Die NUCLEO-L432KC-Platine wurde über VIN und GND versorgt; die eingestellte Spannung wurde in 1-V-Schritten von 8 V bis 2 V abgesenkt. Für die Raspberry-Pi-Beobachtung wurde bei einer Sollspannung von 4,50 V der Status mit vcgencmd get\_throttled abgefragt.
 
 #include "../tabellen/tab-5-1.typ"
 
 // Vorlage: PDF-Seite 38
 === Softwarearchitektur des Raspberry Pi <sec-5-2-2>
 
-Die Anwendungssoftware des Raspberry Pi ist in drei voneinander getrennte systemd- Dienste aufgeteilt:
+Die Anwendungssoftware des Raspberry Pi ist in drei voneinander getrennte systemd-Dienste aufgeteilt:
 
 - weather-gps.service,
 
@@ -49,7 +49,7 @@ Der GPS-Dienst liest die NMEA-Daten des GPS-Empfängers ein und speichert den ak
 GPS=OK;NET=OK;TEMP=19.3;WIND=10.2;CODE=3;MODE=LIVE*1B
 ```
 
-Der Wert hinter dem Sternzeichen ist eine XOR-Prüfsumme. Der STM32 verarbeitet den Datenrahmen nur dann weiter, wenn die Prüfsumme gültig ist. Die drei Dienste sind im gemeinsamen systemd-Target weather.target zusammengefasst. Die Trennung erlaubt eine lokale Wiederherstellung einzelner Funktionen. Ein Fehler des GPS-Dienstes erfordert beispielsweise keinen Neustart des Netzwerk- oder UART- Dienstes.
+Der Wert hinter dem Sternzeichen ist eine XOR-Prüfsumme. Der STM32 verarbeitet den Datenrahmen nur dann weiter, wenn die Prüfsumme gültig ist. Die drei Dienste sind im gemeinsamen systemd-Target weather.target zusammengefasst. Die Trennung erlaubt eine lokale Wiederherstellung einzelner Funktionen. Ein Fehler des GPS-Dienstes erfordert beispielsweise keinen Neustart des Netzwerk- oder UART-Dienstes.
 
 // Vorlage: PDF-Seite 39
 === Softwarearchitektur des STM32 <sec-5-2-3>
@@ -73,9 +73,7 @@ Das System verwendet eine hierarchische Fehlerbehandlung. Es wird nicht bei jede
 
 + Protokollvalidierung: Ungültige Prüfsummen und zu große UART-Nachrichten werden verworfen.
 
-+ Lokale Komponenten-Recovery: Ein LCD-/I2C-Ausfall wird lokal behandelt;
-
-das System arbeitet vorübergehend im Modus DEGRADED.
++ Lokale Komponenten-Recovery: Ein LCD-/I2C-Ausfall wird lokal behandelt; das System arbeitet vorübergehend im Modus DEGRADED.
 
 + Anwendungsbasierter Fallback: Bei GPS-Verlust werden die zuletzt gültigen Daten mit MODE=LAST weiterverwendet.
 
@@ -117,7 +115,7 @@ RPI_LINK_RECOVERED
 // Vorlage: PDF-Seite 41
 === Externe Messung bei vollständigen Neustarts <sec-5-3-3>
 
-Bei einem vollständigen Neustart kann ein lokal laufendes Messprogramm die Messung nicht fortsetzen. Deshalb wurde für die Tests P1 und P2 ein externer Rechner verwendet. Dieser prüfte die Erreichbarkeit des Raspberry Pi in Intervallen von 0,25 s per ICMP- Ping und protokollierte die Zustandswechsel UP, DOWN und erneut UP. Die externe Nichtverfügbarkeit wurde berechnet als
+Bei einem vollständigen Neustart kann ein lokal laufendes Messprogramm die Messung nicht fortsetzen. Deshalb wurde für die Tests P1 und P2 ein externer Rechner verwendet. Dieser prüfte die Erreichbarkeit des Raspberry Pi in Intervallen von 0,25 s per ICMP-Ping und protokollierte die Zustandswechsel UP, DOWN und erneut UP. Die externe Nichtverfügbarkeit wurde berechnet als
 
 #gleichung($t_"extern" = t_"UP" - t_"DOWN"$, <eq-5-2>)
 
@@ -169,12 +167,12 @@ Für P2 wurden zwei funktional erfolgreiche Durchläufe ausgeführt. Eine verwer
 // Vorlage: PDF-Seite 47
 === N2: Ausfall und Wiederherstellung der Wetterverbindung <sec-5-5-2>
 
-Zum Auslösen des Netzwerkfehlers blockierte eine nftables-Regel ausgehende HTTPS- Verbindungen. Jeder der fünf Durchläufe führte erwartungsgemäß zum Zustand NET=ERR; weder der Netzwerk- noch der UART-Dienst musste dafür neu gestartet werden. Zwischen Aktivierung der Regel und INTERNET\_ERROR lagen im Mittel 3,14 s. Bis der STM32 den Fehlerstatus erhielt, kamen durchschnittlich 4,22 s hinzu. Die End-to-End- Fehlerweitergabe dauerte damit im Mittel 7,36 s. Nach Aufhebung der Sperre lieferte die Wetterabfrage nach durchschnittlich 5,82 s wieder gültige Daten. Weitere 4,28 s später war NET=OK an den STM32 übertragen. Für die vollständige funktionale Wiederherstellung ergibt sich ein Mittelwert von 10,10 s. Die Standardabweichung von lediglich 0,14 s weist darauf hin, dass dieser Ablauf vor allem durch die periodischen Dienstzyklen bestimmt wird.
+Zum Auslösen des Netzwerkfehlers blockierte eine nftables-Regel ausgehende HTTPS-Verbindungen. Jeder der fünf Durchläufe führte erwartungsgemäß zum Zustand NET=ERR; weder der Netzwerk- noch der UART-Dienst musste dafür neu gestartet werden. Zwischen Aktivierung der Regel und INTERNET\_ERROR lagen im Mittel 3,14 s. Bis der STM32 den Fehlerstatus erhielt, kamen durchschnittlich 4,22 s hinzu. Die End-to-End-Fehlerweitergabe dauerte damit im Mittel 7,36 s. Nach Aufhebung der Sperre lieferte die Wetterabfrage nach durchschnittlich 5,82 s wieder gültige Daten. Weitere 4,28 s später war NET=OK an den STM32 übertragen. Für die vollständige funktionale Wiederherstellung ergibt sich ein Mittelwert von 10,10 s. Die Standardabweichung von lediglich 0,14 s weist darauf hin, dass dieser Ablauf vor allem durch die periodischen Dienstzyklen bestimmt wird.
 
 // Vorlage: PDF-Seite 47
 === G1: Verlust und Wiederkehr des GPS-Empfängers <sec-5-5-3>
 
-Nach dem Trennen des USB-GPS setzte der GPS-Dienst den booleschen Status have\_fix auf false. Der UART-Dienst kennzeichnete die Daten daraufhin mit GPS=ERR und MO- DE=LAST. Vom erkannten Geräteverlust bis zu dieser Weitergabe vergingen durchschnittlich 3,12 s. Nach dem Wiederanschluss stand ein gültiger Fix im Mittel nach 4,22 s zur Verfügung; die Umschaltung auf MODE=LIVE folgte nach weiteren 2,20 s. Insgesamt dauerte die funktionale Wiederherstellung im Mittel 6,42 s. Die Einzelwerte streuen deutlich. Ursachen sind die manuelle Fehlerinjektion, die jeweilige Phase der periodischen Dienstzyklen und der Hot-Start des GPS-Empfängers.
+Nach dem Trennen des USB-GPS setzte der GPS-Dienst den booleschen Status have\_fix auf false. Der UART-Dienst kennzeichnete die Daten daraufhin mit GPS=ERR und MODE=LAST. Vom erkannten Geräteverlust bis zu dieser Weitergabe vergingen durchschnittlich 3,12 s. Nach dem Wiederanschluss stand ein gültiger Fix im Mittel nach 4,22 s zur Verfügung; die Umschaltung auf MODE=LIVE folgte nach weiteren 2,20 s. Insgesamt dauerte die funktionale Wiederherstellung im Mittel 6,42 s. Die Einzelwerte streuen deutlich. Ursachen sind die manuelle Fehlerinjektion, die jeweilige Phase der periodischen Dienstzyklen und der Hot-Start des GPS-Empfängers.
 
 // Vorlage: PDF-Seite 47
 === C1: Unterbrechung der Verbindung zum STM32 <sec-5-5-4>
@@ -184,7 +182,7 @@ Für C1 wurde die Sendeleitung des Raspberry Pi zum STM32 manuell getrennt. Alle
 // Vorlage: PDF-Seite 48
 === H1: Firmware-Hänger und STM32-IWDG <sec-5-5-5>
 
-Mit HANG wurde die Firmware gezielt angehalten; zuvor bestätigte der STM32 den Befehl durch HANGING. Das Boot-Banner erschien im Mittel 1,23 s später, ein PONG während der Bootdiagnose nach 3,35 s. Vom Absenden des HANG-Befehls bis zum erneuten Applikationsbetrieb vergingen jeweils 5,70 s. Die Diagnose meldete in sämtlichen Durchläufen den IWDG als Reset-Ursache. Nach dem Wechsel in den Applikationsmodus funktionierte auch die PING/PONG-Kommunikation wieder. Dass die gerundeten Werte in allen fünf Messungen übereinstimmen, belegt die Reproduzierbarkeit innerhalb der Auflösung von 0,01 s
+Mit HANG wurde die Firmware gezielt angehalten; zuvor bestätigte der STM32 den Befehl durch HANGING. Das Boot-Banner erschien im Mittel 1,23 s später, ein PONG während der Bootdiagnose nach 3,35 s. Vom Absenden des HANG-Befehls bis zum erneuten Applikationsbetrieb vergingen jeweils 5,70 s. Die Diagnose meldete in sämtlichen Durchläufen den IWDG als Reset-Ursache. Nach dem Wechsel in den Applikationsmodus funktionierte auch die PING/PONG-Kommunikation wieder. Dass die gerundeten Werte in allen fünf Messungen übereinstimmen, belegt die Reproduzierbarkeit innerhalb der Auflösung von 0,01 s.
 
 // Vorlage: PDF-Seite 48
 === S1 und S2: Hängender gegenüber abgestürztem GPS-Dienst <sec-5-5-6>
@@ -201,12 +199,12 @@ Auch den angehaltenen UART-Dienst erkannte der systemd-Service-Watchdog in jedem
 // Vorlage: PDF-Seite 50
 === U1 und U2: UART-Datenintegrität und Puffergrenzen <sec-5-5-8>
 
-U1 bestätigte die Prüfsummenprüfung: Sämtliche fünf Rahmen mit bewusst falschem XOR- Wert wurden verworfen. Bis zur Antwort ERR:CHECKSUM vergingen durchschnittlich 0,010 s. Direkt danach akzeptierte der STM32 jeweils einen gültigen Rahmen und beantwortete auch den folgenden PING. Für U2 wurden Zeilen mit 140 Zeichen gesendet und damit die festgelegte Puffergrenze überschritten. Jeder Versuch erzeugte ERR:BUFFER; die Antwort erfolgte im Mittel nach 0,018 s. Anschließend blieben sowohl PING/PONG als auch die Verarbeitung eines gültigen Datenrahmens funktionsfähig. Die Fehlerbehandlung verwirft somit den betroffenen Rahmen, ohne den Empfänger dauerhaft zu desynchronisieren oder einen Reset auszulösen.
+U1 bestätigte die Prüfsummenprüfung: Sämtliche fünf Rahmen mit bewusst falschem XOR-Wert wurden verworfen. Bis zur Antwort ERR:CHECKSUM vergingen durchschnittlich 0,010 s. Direkt danach akzeptierte der STM32 jeweils einen gültigen Rahmen und beantwortete auch den folgenden PING. Für U2 wurden Zeilen mit 140 Zeichen gesendet und damit die festgelegte Puffergrenze überschritten. Jeder Versuch erzeugte ERR:BUFFER; die Antwort erfolgte im Mittel nach 0,018 s. Anschließend blieben sowohl PING/PONG als auch die Verarbeitung eines gültigen Datenrahmens funktionsfähig. Die Fehlerbehandlung verwirft somit den betroffenen Rahmen, ohne den Empfänger dauerhaft zu desynchronisieren oder einen Reset auszulösen.
 
 // Vorlage: PDF-Seite 50
 === L1: Lokale Recovery des LCD-/I2C-Pfads <sec-5-5-9>
 
-Das Trennen der SDA-Leitung führte in jedem Versuch zum Übergang von NORMAL nach DEGRADED; gleichzeitig änderte sich LCD\_DRIVER von OK auf FAIL. Nach dem Wiederanschluss kehrte der Supervisor ohne Mikrocontroller-Reset in den Normalzustand zurück. Ab der Bedienerbestätigung lagen zwischen Eingriff und bestätigtem Supervisor- Zustand im Mittel 0,046 s für den Fehler sowie 0,044 s für die Recovery.
+Das Trennen der SDA-Leitung führte in jedem Versuch zum Übergang von NORMAL nach DEGRADED; gleichzeitig änderte sich LCD\_DRIVER von OK auf FAIL. Nach dem Wiederanschluss kehrte der Supervisor ohne Mikrocontroller-Reset in den Normalzustand zurück. Ab der Bedienerbestätigung lagen zwischen Eingriff und bestätigtem Supervisor-Zustand im Mittel 0,046 s für den Fehler sowie 0,044 s für die Recovery.
 
 // Vorlage: PDF-Seite 50
 === P1: Vollständiger Spannungsverlust <sec-5-5-10>
@@ -224,7 +222,7 @@ Bei jedem Durchlauf änderte sich die Boot-ID; anschließend starteten alle drei
 
 Der Raspberry Pi betrieb den BCM2835-Hardware-Watchdog mit einem von wdctl gemeldeten Timeout von 60 s. Der Fehler wurde als Kernel-Panic über Magic SysRq ausgelöst. Da kernel.panic=0 einen automatischen Neustart des Kernels ausschloss, blieb als vorgesehener Recovery-Pfad nur der unabhängige Hardware-Watchdog.
 
-Beide Durchläufe waren funktional erfolgreich: Die Boot-ID änderte sich, alle drei Dienste starteten erneut, und GPS, Wetterabfrage sowie STM32-Kommunikation standen wieder zur Verfügung. Für die zeitliche Auswertung liegt jedoch nur ein verwertbarer Durchlauf vor: Einzelmessung: 35 s; Der von wdctl gemeldete Watchdog-Timeout von 60 s beginnt nicht mit dem ersten fehlgeschlagenen externen Ping. Der Hardware-Watchdog wurde bereits vor der Fehlerinjektion periodisch aktualisiert; beim Auslösen der Kernel-Panic konnte deshalb ein Teil des aktuellen Watchdog- Intervalls bereits verstrichen sein. Die externe Messung setzte zudem erst beim Übergang von Netzwerkzustand UP zu DOWN ein. Der Einzelwert umfasst somit die verbleibende Watchdog-Zeit, den Hardware-Reset, den Linux-Boot und die Wiederherstellung der Netzwerkverbindung.
+Beide Durchläufe waren funktional erfolgreich: Die Boot-ID änderte sich, alle drei Dienste starteten erneut, und GPS, Wetterabfrage sowie STM32-Kommunikation standen wieder zur Verfügung. Für die zeitliche Auswertung liegt jedoch nur ein verwertbarer Durchlauf vor: Einzelmessung: 35 s; Der von wdctl gemeldete Watchdog-Timeout von 60 s beginnt nicht mit dem ersten fehlgeschlagenen externen Ping. Der Hardware-Watchdog wurde bereits vor der Fehlerinjektion periodisch aktualisiert; beim Auslösen der Kernel-Panic konnte deshalb ein Teil des aktuellen Watchdog-Intervalls bereits verstrichen sein. Die externe Messung setzte zudem erst beim Übergang von Netzwerkzustand UP zu DOWN ein. Der Einzelwert umfasst somit die verbleibende Watchdog-Zeit, den Hardware-Reset, den Linux-Boot und die Wiederherstellung der Netzwerkverbindung.
 
 // Vorlage: PDF-Seite 52
 === P3: Kontrollierter Unterspannungstest <sec-5-5-12>

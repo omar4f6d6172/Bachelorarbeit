@@ -25,7 +25,7 @@ F1: Wie muss ein heterogenes eingebettetes System strukturiert werden, damit Feh
 
 F2: Wie unterscheiden sich lokale Recovery, Dienstneustart, Mikrocontroller-Reset und vollständiger Systemneustart hinsichtlich Eingriffstiefe und funktionaler Wiederherstellungszeit?
 
-F3: Welche Unterschiede zeigen sich zwischen Prozessabsturz, Prozess-Hänger, Firmware- Hänger und vollständigem Linux-Hänger?
+F3: Welche Unterschiede zeigen sich zwischen Prozessabsturz, Prozess-Hänger, Firmware-Hänger und vollständigem Linux-Hänger?
 
 F4: In welchem Umfang kann das entwickelte System nach den betrachteten Hardware-, Kommunikations- und Softwarefehlern automatisch in einen definierten Zustand zurückkehren?
 

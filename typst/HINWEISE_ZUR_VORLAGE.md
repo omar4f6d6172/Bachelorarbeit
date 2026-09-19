@@ -47,3 +47,12 @@ sind in `README.md` beschrieben. Die PNG-Originale bleiben als Referenz erhalten
 der Terminal-Screenshot wird mit einem Sichtfenster ohne eingebrannte Bildunterschrift
 angezeigt. Diese Layoutänderungen beseitigen keine der oben dokumentierten Textlücken.
 Die noch zu bearbeitenden Abgabepunkte stehen separat in `OFFENE_ABGABEPUNKTE.md`.
+
+
+## Stand nach der formalen Review-Korrektur
+
+Die obige Tabelle dokumentiert den Zustand der Originalvorlage. Die eindeutigen
+Sprach- und Satzzeichenfehler in 2.8, 4.2.4, 6.1.4 und 6.7 wurden inzwischen
+korrigiert. Inhaltlich unvollständige Stellen, insbesondere in 4.1, 4.2.5, 6.8.3
+und 7.1, sowie das UART-Listing bleiben zur fachlichen Klärung offen.
+Die konkret vorgenommenen Korrekturen stehen in `OFFENE_ABGABEPUNKTE.md`.

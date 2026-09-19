@@ -4,6 +4,7 @@ Untersuchung von Watchdog- und Recovery-Strategien für ein robustes eingebettet
 
 - [Typst-Hauptdatei](typst/bachelorarbeit.typ)
 - [Kompilierte PDF](output/pdf/bachelorarbeit-typst.pdf)
+- [Inhaltliche Revision – bearbeitbarer Plan](INHALTLICHE_REVISION.md)
 - [Offene Abgabepunkte](typst/OFFENE_ABGABEPUNKTE.md)
 - [Projektaufbau und Anleitung](typst/README.md)
 - [Hinweise zu Textlücken und fehlenden Anhängen der Vorlage](typst/HINWEISE_ZUR_VORLAGE.md)

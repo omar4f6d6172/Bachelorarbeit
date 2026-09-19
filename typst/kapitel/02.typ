@@ -63,7 +63,7 @@ Ein Watchdog erwartet ein periodisches Lebenszeichen innerhalb eines vorgegebene
 // Vorlage: PDF-Seite 15
 === Anwendungs- und Kommunikationsüberwachung <sec-2-7-1>
 
-Auf Anwendungsebene werden Ausnahmen, Zustandsalter, Prüfsummen und Heartbeat- Nachrichten verwendet. Diese Mechanismen können differenzierte Fehlerzustände erzeugen und lokale Recovery auslösen. Sie fallen jedoch aus, wenn die gesamte Ausführungsumgebung blockiert.
+Auf Anwendungsebene werden Ausnahmen, Zustandsalter, Prüfsummen und Heartbeat-Nachrichten verwendet. Diese Mechanismen können differenzierte Fehlerzustände erzeugen und lokale Recovery auslösen. Sie fallen jedoch aus, wenn die gesamte Ausführungsumgebung blockiert.
 
 // Vorlage: PDF-Seite 15
 === Service-Watchdog <sec-2-7-2>
@@ -73,7 +73,7 @@ Ein Service-Manager kann Prozesse überwachen. Bei systemd aktiviert WatchdogSec
 // Vorlage: PDF-Seite 16
 === Mikrocontroller-Watchdog <sec-2-7-3>
 
-Der STM32L432KC besitzt einen Independent Watchdog, der aus dem Low-Speed- Internal- Oszillator getaktet wird und einen Reset auslöst, wenn der Zähler nicht rechtzeitig aktualisiert wird \[#quelle(<lit-04>), S. 1037–1045, Abschn. 33, #quelle(<lit-09>), S. 30 und 41\]. Die unabhängige Taktquelle reduziert gemeinsame Fehlerursachen mit dem Haupttakt. Ein Window Watchdog kann darüber hinaus auch ein zu frühes Lebenszeichen als Fehler erkennen; er wurde in der Arbeit nicht verwendet.
+Der STM32L432KC besitzt einen Independent Watchdog, der aus dem Low-Speed-Internal-Oszillator getaktet wird und einen Reset auslöst, wenn der Zähler nicht rechtzeitig aktualisiert wird \[#quelle(<lit-04>), S. 1037–1045, Abschn. 33, #quelle(<lit-09>), S. 30 und 41\]. Die unabhängige Taktquelle reduziert gemeinsame Fehlerursachen mit dem Haupttakt. Ein Window Watchdog kann darüber hinaus auch ein zu frühes Lebenszeichen als Fehler erkennen; er wurde in der Arbeit nicht verwendet.
 
 // Vorlage: PDF-Seite 16
 === Systemweiter Hardware-Watchdog <sec-2-7-4>
@@ -84,7 +84,7 @@ Linux stellt Hardware-Watchdogs über die Watchdog-API und Geräte wie /dev/watc
 == Timeout-Dimensionierung <sec-2-8>
 
 // VORLAGE PDF S. 16: Satz am rechten Seitenrand abgeschnitten (gültige/gültigen).
-Die Dimensionierung eines Watchdog-Timeouts ist zunächst ein allgemeines Entwurfsproblem. Der Timeout muss größer sein als der größte im fehlerfreien Betrieb erwartete Abstand zwischen zwei gültige Fortschrittsmeldungen. Zusätzlich sind zeitliche Schwankungen durch Scheduling, Interrupts und asynchrone Kommunikation sowie eine Sicherheitsreserve zu berücksichtigen \[#quelle(<lit-10>), S. 4 und 12\] \[#quelle(<lit-11>), S. 16\].
+Die Dimensionierung eines Watchdog-Timeouts ist zunächst ein allgemeines Entwurfsproblem. Der Timeout muss größer sein als der größte im fehlerfreien Betrieb erwartete Abstand zwischen zwei gültigen Fortschrittsmeldungen. Zusätzlich sind zeitliche Schwankungen durch Scheduling, Interrupts und asynchrone Kommunikation sowie eine Sicherheitsreserve zu berücksichtigen \[#quelle(<lit-10>), S. 4 und 12\] \[#quelle(<lit-11>), S. 16\].
 
 // Formeln sind aus den sichtbaren Formeln der Vorlage nativ nachgesetzt.
 Dabei bezeichnet T\_WDT den Watchdog-Timeout, T\_max,normal den größten erwarteten Abstand zwischen zwei zulässigen Keepalives, T\_Jitter die zusätzliche zeitliche Schwankung und T\_Reserve eine Sicherheitsmarge. Daraus ergibt sich als vereinfachte Entwurfsregel:
@@ -106,7 +106,7 @@ UART liefert einen Bytestrom ohne inhärente Rahmen- oder Integritätsgarantie. 
 // Vorlage: PDF-Seite 18
 == I2C und lokale Bus-Recovery <sec-2-11>
 
-I2C verwendet Open-Drain-Leitungen und adressierte Transfers. Die offizielle Spezifikation beschreibt unter anderem START/STOP-Bedingungen, Acknowledgements und das Bus- Clear-Verfahren \[#quelle(<lit-14>), Abschn. 3.1.1, 3.1.4-3.1.6, 3.1.16\]. Bleibt eine Peripherie oder Leitung in einem fehlerhaften Zustand, darf eine blockierende BUSY-Prüfung die Anwendung nicht dauerhaft anhalten. Die Arbeit begrenzt Wartezeiten, setzt den I2C-Block zurück und erzeugt bei Bedarf Taktpulse zur Busfreigabe, bevor das LCD neu initialisiert wird. Das angeschlossene LCD2004-Zeichenmodul wird über den Adapter als HD44780-basiertes Display angesteuert \[#quelle(<lit-19>), S. 4\]. Der eingesetzte AZDelivery-I2C-Adapter verwendet einen PCF8574-I/O-Expander \[#quelle(<lit-19>), S. 4\]. Die Eigenschaften und der hardwareseitig einstellbare Adressbereich des Expanders sind im NXP-Datenblatt dokumentiert \[#quelle(<lit-15>), S. 1 und 5-8\].
+I2C verwendet Open-Drain-Leitungen und adressierte Transfers. Die offizielle Spezifikation beschreibt unter anderem START/STOP-Bedingungen, Acknowledgements und das Bus-Clear-Verfahren \[#quelle(<lit-14>), Abschn. 3.1.1, 3.1.4-3.1.6, 3.1.16\]. Bleibt eine Peripherie oder Leitung in einem fehlerhaften Zustand, darf eine blockierende BUSY-Prüfung die Anwendung nicht dauerhaft anhalten. Die Arbeit begrenzt Wartezeiten, setzt den I2C-Block zurück und erzeugt bei Bedarf Taktpulse zur Busfreigabe, bevor das LCD neu initialisiert wird. Das angeschlossene LCD2004-Zeichenmodul wird über den Adapter als HD44780-basiertes Display angesteuert \[#quelle(<lit-19>), S. 4\]. Der eingesetzte AZDelivery-I2C-Adapter verwendet einen PCF8574-I/O-Expander \[#quelle(<lit-19>), S. 4\]. Die Eigenschaften und der hardwareseitig einstellbare Adressbereich des Expanders sind im NXP-Datenblatt dokumentiert \[#quelle(<lit-15>), S. 1 und 5-8\].
 
 // Vorlage: PDF-Seite 18
 == GPS, NMEA und externe Wetterdaten <sec-2-12>
