@@ -1,0 +1,20 @@
+= Abkürzungsverzeichnis
+
+#table(columns: (23mm, 1fr), stroke: none, inset: (y: 4pt, x: 0pt),
+[API], [Application Programming Interface],
+[CRC], [Cyclic Redundancy Check],
+[GPIO], [General Purpose Input/Output],
+[HTTP(S)], [Hypertext Transfer Protocol (Secure)],
+[BOR], [Brown-out Reset],
+[I2C], [Inter-Integrated Circuit],
+[ICMP], [Internet Control Message Protocol],
+[IWDG], [Independent Watchdog],
+[JSON], [JavaScript Object Notation],
+[LCD], [Liquid Crystal Display],
+[LSI], [Low-Speed Internal Oscillator],
+[NMEA], [National Marine Electronics Association],
+[PVD], [Programmable Voltage Detector],
+[RTC], [Real-Time Clock],
+[UART], [Universal Asynchronous Receiver/Transmitter],
+[WDT], [Watchdog Timer],
+)

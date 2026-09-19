@@ -1,0 +1,3 @@
+# Lokales Auslieferungsarchiv; Quellen und kompilierte PDF sind versioniert.
+output/*.zip
+.DS_Store
