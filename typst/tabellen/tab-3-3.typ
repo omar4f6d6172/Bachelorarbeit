@@ -5,7 +5,8 @@
   (
     [Ungültige UART-Prüfsumme], [Daten], [Prüfsummenvergleich], [Rahmen verwerfen, Fehlerantwort senden],
     [UART-Pufferüberlauf], [Daten/Link], [Längenbegrenzung], [Pufferzustand verwerfen und Synchronisation fortsetzen],
-    [HTTPS-Verbindung unterbrochen], [Netzwerk], [Ausnahme bei Wetterabfrage], [Fehlerzustand speichern und periodisch erneut versuchen],
+    [Netzwerkpfad nicht verfügbar], [Netzwerk], [Link-, Routing-, DNS- oder TLS-Diagnose], [Retry mit Backoff; Netzschnittstelle nur bei bestätigtem lokalem Fehler neu initialisieren],
+    [Wetterdienst oder Antwort fehlerhaft], [Externer Dienst/Daten], [HTTP-Status und Antwortvalidierung], [Wetterdaten als nicht verfügbar markieren; Retry mit Backoff ohne Netzwerkreset],
     [Kein GPS-Gerät oder kein Fix], [Peripherie], [Geräte-/Timeout-Prüfung], [Letzte gültige Daten verwenden, MODE=LAST],
     [UART-Verbindung unterbrochen], [UART-Verbindung], [PING/PONG-Timeout], [Wiederholungsversuch und automatische Wiederherstellung der Verbindung],
     [LCD getrennt], [I2C/LCD], [NACK oder Schreibfehler], [Lokale LCD-/I2C-Recovery, Modus DEGRADED],

@@ -5,11 +5,12 @@
   (
     [Ungültige Prüfsumme / Pufferüberlauf], [Rahmen verwerfen bzw. Empfänger synchronisieren], [Fehler bleibt auf Protokollebene isoliert.],
     [LCD-/I2C-Ausfall], [Lokale Komponenten-Recovery], [Anzeigeausfall stoppt den übrigen Datenpfad nicht.],
-    [GPS- oder Netzwerkverlust], [Gekennzeichneter Fallback und Retry], [Noch verfügbare Funktionen bleiben aktiv.],
+    [GPS-Verlust], [Gekennzeichneter Fallback und Retry], [Letzte zulässige Position wird als MODE=LAST gekennzeichnet.],
+    [Blockierter HTTPS-Wetterdatenpfad], [Degradierter Zustand und periodischer Retry], [Kein gültiger Wetterdatensatz; Ursache innerhalb des Datenpfads bleibt unbestimmt.],
     [Prozessabsturz], [systemd-Restart], [Prozessende ist unmittelbar sichtbar.],
-    [Prozess-Hänger], [systemd-Service-Watchdog], [Liveness muss über ausbleibende Keepalives erkannt werden.],
+    [Prozess-Hänger], [systemd-Service-Watchdog], [Fehlender Funktionsfortschritt muss über ausbleibende Keepalives erkannt werden.],
     [STM32-Firmware-Hänger], [IWDG-Reset], [Firmware kann keine lokale Recovery mehr ausführen.],
-    [Linux-Kernel-Hänger], [Hardware-Watchdog], [Userspace und systemd sind nicht mehr handlungsfähig.],
+    [Linux-Kernel-Hänger], [Hardware-Watchdog], [Linux-Prozesse im Benutzerraum und systemd sind nicht mehr handlungsfähig.],
     [Vollständiger Spannungsverlust], [Automatischer Boot und Dienststart], [Recovery beginnt erst nach Rückkehr der Versorgung.],
   ),
 )

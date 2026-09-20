@@ -23,69 +23,23 @@ Die Evaluation beantwortet insbesondere folgende Fragen:
 + Wie reproduzierbar sind die gemessenen Zeiten über mehrere Versuchsdurchläufe?
 
 // Vorlage: PDF-Seite 37
-== Versuchsaufbau <sec-5-2>
+== Evaluationsaufbau und Beobachtungspunkte <sec-5-2>
 
-// Vorlage: PDF-Seite 37
-=== Hardwareaufbau <sec-5-2-1>
+Die Systemarchitektur, ihre Schnittstellen und die Recovery-Hierarchie wurden in #ref(<sec-3>, supplement: [Kapitel]) gemeinsam mit der Implementierung beschrieben. Für die Evaluation werden deshalb nur die konkrete Geräteauswahl, zusätzliche Messmittel und diejenigen Zustände ergänzt, an denen Fehlererkennung und funktionale Wiederherstellung beobachtet werden.
 
-Der Versuchsaufbau besteht aus einem Raspberry Pi 4 Model B und einem STM32-Nucleo-L432KC-Entwicklungsboard. Der Raspberry Pi übernimmt die Positionsverarbeitung, die Abfrage der Wetterdaten und die Verwaltung der Linux-Dienste. Der STM32 steuert das Display, validiert die UART-Daten und überwacht mehrere interne sowie externe Systemkomponenten. Die Positionsdaten werden mit einem unter der Vertriebsbezeichnung Binghe VK-162 erworbenen USB-GPS-Empfänger erfasst. Das vollständige Gerät wird unter Linux als serielle Schnittstelle /dev/ttyACM0 eingebunden und liefert NMEA-Datensätze mit 9.600 Bd. Die intern erkannte Empfängereinheit meldete sich in den Versuchslogs als ublox-7- beziehungsweise UBX-G70xx-Hardware; die zugehörigen USB- und Startmeldungen sind in Anhang A dokumentiert. Aus den GPRMC-Datensätzen werden Breiten- und Längengrad bestimmt. Die Kommunikation zwischen Raspberry Pi und STM32 erfolgt über eine UART-Verbindung mit 115.200 Bd. Auf dem Raspberry Pi wird /dev/serial0 verwendet. Auf dem STM32 kommt USART1 mit PA9 als TX und PA10 als RX zum Einsatz. Zur Anzeige der Wetter- und Systeminformationen wird ein LCD2004-Modul mit vier Zeilen und jeweils 20 Zeichen verwendet. Der eingesetzte AZDelivery-I2C-Adapter verwendet einen PCF8574-I/O-Expander \[#quelle(<lit-19>), S. 4\]; dessen technische Eigenschaften sind im NXP-Datenblatt dokumentiert \[#quelle(<lit-15>), S. 1 und 5–8\]. Das angeschlossene Zeichenmodul wird über den Adapter als HD44780-basiertes Display angesteuert \[#quelle(<lit-19>), S. 4\]. Im Versuchsaufbau wurde ausschließlich die 7-Bit-Adresse 0x27 bei einer Busfrequenz von 100 kHz verwendet. Für den ergänzenden Unterspannungstest wurde ein Labornetzteil verwendet. Die NUCLEO-L432KC-Platine wurde über VIN und GND versorgt; die eingestellte Spannung wurde in 1-V-Schritten von 8 V bis 2 V abgesenkt. Für die Raspberry-Pi-Beobachtung wurde bei einer Sollspannung von 4,50 V der Status mit vcgencmd get\_throttled abgefragt.
+=== Hardware und externe Instrumentierung <sec-5-2-1>
+
+Der Versuchsaufbau besteht aus einem Raspberry Pi 4 Model B, einem STM32-Nucleo-L432KC-Entwicklungsboard, einem unter der Vertriebsbezeichnung Binghe VK-162 erworbenen USB-GPS-Empfänger sowie einem LCD2004 mit AZDelivery-I2C-Adapter. Die intern erkannte GPS-Empfängereinheit meldete sich in den Versuchslogs als ublox-7- beziehungsweise UBX-G70xx-Hardware; die zugehörigen USB- und Startmeldungen sind in Anhang A dokumentiert. Aus den GPRMC-Datensätzen werden Breiten- und Längengrad bestimmt; GPRMC bezeichnet einen RMC-Satz mit dem NMEA-Talker-Identifier GP.
+
+Der LCD-Adapter verwendet einen PCF8574-I/O-Expander \[#quelle(<lit-19>), S. 4\]; dessen technische Eigenschaften sind im NXP-Datenblatt dokumentiert \[#quelle(<lit-15>), S. 1 und 5–8\]. Für den ergänzenden Unterspannungstest wurde die NUCLEO-L432KC-Platine über VIN und GND von einem Labornetzteil versorgt und die eingestellte Spannung in 1-V-Schritten von 8 V bis 2 V abgesenkt. Beim Raspberry Pi wurde bei einer Sollspannung von 4,50 V zusätzlich vcgencmd get\_throttled abgefragt. Das Kommando liefert aktuelle und seit dem Start gespeicherte Unterspannungs- und Drosselungszustände als Bitmaske.
 
 #include "../tabellen/tab-5-1.typ"
 
-// Vorlage: PDF-Seite 38
-=== Softwarearchitektur des Raspberry Pi <sec-5-2-2>
+=== Softwareseitige Beobachtungspunkte <sec-5-2-2>
 
-Die Anwendungssoftware des Raspberry Pi ist in drei voneinander getrennte systemd-Dienste aufgeteilt:
+Die Evaluation greift auf dieselben Zustände zurück, die im Betrieb die Recovery steuern. Auf dem Raspberry Pi zeigen gps.json mit have_fix und fix_ts sowie weather.json mit ok und reason die Verfügbarkeit und Aktualität der beiden Eingangszustände. Der Status in weather.json beschreibt jedoch nur den Erfolg des Wetterabrufs; ein unabhängiger Zustand der allgemeinen Netzwerkkonnektivität wird im Prototyp nicht erfasst. Das systemd-Journal dokumentiert Prozessstarts, Watchdog-Timeouts und Dienstneustarts. An der Plattformgrenze belegen PONG, OK und die Fehlermeldungen des UART-Protokolls, ob Nachrichten empfangen, validiert und beantwortet wurden.
 
-- weather-gps.service,
-
-- weather-net.service,
-
-- weather-uart.service.
-
-Der GPS-Dienst liest die NMEA-Daten des GPS-Empfängers ein und speichert den aktuellen Positionszustand in /dev/shm/weather/gps.json. Der Boolesche Wert have\_fix zeigt an, ob eine gültige Position verfügbar ist. Der Netzwerkdienst verwendet die zuletzt gültige Position für die Wetterabfrage. Das Ergebnis wird in /dev/shm/weather/weather.json gespeichert. ok=true kennzeichnet eine erfolgreiche Wetterabfrage. ok=false fasst in der aktuellen Implementierung sowohl Fehler der Netzwerkkonnektivität als auch Fehler des externen Wetterdienstes zusammen; diese Ursachen werden bei der Interpretation getrennt betrachtet. Der UART-Dienst besitzt exklusiv die serielle Verbindung zum STM32, führt periodisch PING/PONG aus und überträgt anschließend den aktuellen GPS- und Wetterzustand. Ein typischer Datenrahmen lautet:
-
-```text
-GPS=OK;NET=OK;TEMP=19.3;WIND=10.2;CODE=3;MODE=LIVE*1B
-```
-
-Der Wert hinter dem Sternzeichen ist eine XOR-Prüfsumme. Der STM32 verarbeitet den Datenrahmen nur dann weiter, wenn die Prüfsumme gültig ist. Die drei Dienste sind im gemeinsamen systemd-Target weather.target zusammengefasst. Die Trennung erlaubt eine lokale Wiederherstellung einzelner Funktionen. Ein Fehler des GPS-Dienstes erfordert beispielsweise keinen Neustart des Netzwerk- oder UART-Dienstes.
-
-// Vorlage: PDF-Seite 39
-=== Softwarearchitektur des STM32 <sec-5-2-3>
-
-Die Firmware des STM32 wurde auf Basis von CMSIS implementiert. Beim Systemstart wird eine Bootdiagnose ausgeführt. Dabei werden insbesondere folgende Punkte geprüft:
-
-- I2C-Kommunikation,
-
-- Erreichbarkeit des LCD-Moduls,
-
-- UART-Kommunikation mit dem Raspberry Pi,
-
-- Funktionsfähigkeit des Independent Watchdog,
-
-- Ursache des vorherigen Resets. Nach der Bootdiagnose wechselt die Firmware in den Applikationsmodus. Ein interner Supervisor überwacht während des Betriebs die logischen Subsysteme MAIN\_LOOP, UART\_DRIVER, LCD\_DRIVER, RPI\_LINK und POWER\_SUPPLY. Jedem Subsystem sind ein Zustandswert, eine Kritikalität und ein Zeitstempel der letzten erfolgreichen Aktivität zugeordnet. Nicht kritische Fehler, etwa ein Ausfall des Displays, führen zunächst zum Systemmodus DEGRADED. Kritische Fehler oder ein Stillstand der Hauptschleife verhindern dagegen das Aktualisieren des Independent Watchdog, wodurch ein Reset des Mikrocontrollers ausgelöst wird.
-
-// Vorlage: PDF-Seite 40
-=== Hierarchie der Überwachungs- und Recovery-Ebenen <sec-5-2-4>
-
-Das System verwendet eine hierarchische Fehlerbehandlung. Es wird nicht bei jedem Fehler das Gesamtsystem zurückgesetzt. Stattdessen kommt zunächst die kleinstmögliche Recovery-Ebene zum Einsatz, die den Fehler beheben kann.
-
-+ Protokollvalidierung: Ungültige Prüfsummen und zu große UART-Nachrichten werden verworfen.
-
-+ Lokale Komponenten-Recovery: Ein LCD-/I2C-Ausfall wird lokal behandelt; das System arbeitet vorübergehend im Modus DEGRADED.
-
-+ Anwendungsbasierter Fallback: Bei GPS-Verlust werden die zuletzt gültigen Daten mit MODE=LAST weiterverwendet.
-
-+ systemd-Restart: Ein abgestürzter Linux-Dienst wird nach RestartSec automatisch neu gestartet.
-
-+ systemd-Service-Watchdog: Ein noch vorhandener, aber hängender Dienst wird anhand ausbleibender Keepalive-Nachrichten erkannt und neu gestartet.
-
-+ STM32-IWDG: Ein Firmware-Hänger führt zu einem Reset des Mikrocontrollers.
-
-+ Raspberry-Pi-Hardware-Watchdog: Ein Kernel-Hänger führt zu einem Neustart des vollständigen Linux-Systems.
-
-+ Recovery nach Spannungsverlust: Nach Rückkehr der Versorgung starten beide Rechner sowie alle Dienste automatisch neu.
+Auf dem STM32 markieren APP_RUNTIME, die Supervisor-Zustände und die Reset-Ursache den Übergang vom Boot zur funktionsfähigen Anwendung. LCD_DRIVER, RPI_LINK und die kumulativen Fehler- und Recovery-Zähler grenzen lokale Peripheriefehler von Kommunikations- und Firmwarefehlern ab. Die in #ref(<sec-3-7>, supplement: [Abschnitt]) definierte Eskalationshierarchie legt für jeden Testfall die erwartete Reaktion fest; der Testkatalog in #ref(<sec-5-4>, supplement: [Abschnitt]) ordnet diesen Reaktionen die konkrete Fehlerinjektion und das jeweilige Erfolgskriterium zu.
 
 // Vorlage: PDF-Seite 40
 == Messmethodik <sec-5-3>
@@ -96,6 +50,8 @@ Das System verwendet eine hierarchische Fehlerbehandlung. Es wird nicht bei jede
 Die gezielte Fehlerinjektion ist ein etabliertes Mittel zur experimentellen Bewertung von Fehlererkennungs- und Recovery-Mechanismen \[#quelle(<lit-22>), S. 75–76\]. Für jeden Testfall wurden mindestens zwei Zeitpunkte betrachtet: der Beginn der Fehlerinjektion und das Erreichen eines definierten funktionalen Endzustands. Abhängig vom Testfall wurden zusätzlich Zwischenzeitpunkte protokolliert: Fehlerinjektionszeitpunkt: Zeitpunkt, zu dem der Fehler ausgelöst oder durch den Bediener bestätigt wurde. Fehlererkennungszeitpunkt: Zeitpunkt, zu dem der zuständige Dienst oder Supervisor den Fehler registrierte. Fehlerweitergabezeitpunkt: Zeitpunkt, zu dem der Fehlerstatus an eine nachgelagerte Komponente übertragen wurde. Recovery-Zeitpunkt: Zeitpunkt, zu dem die zuvor ausgefallene Teilfunktion erneut verfügbar war. Funktionale Wiederherstellung: Zeitpunkt, zu dem der vollständige Datenpfad wieder funktionierte und das Ergebnis bestätigt wurde. Die allgemeine End-to-End-Zeit ergibt sich aus
 
 #gleichung($t_"E2E" = t_"funktional" - t_"Fehler"$, <eq-5-1>)
+
+Dabei bezeichnet $t_"Fehler"$ den für den jeweiligen Testfall festgelegten Startzeitpunkt. Dieser ist je nach Versuch die automatische Fehlerinjektion, eine Bedienerbestätigung oder das erste externe DOWN-Ereignis. $t_"funktional"$ ist der Zeitstempel, an dem der vorab definierte funktionale Endzustand bestätigt wurde. Die konkreten Start- und Endereignisse werden je Testfall angegeben.
 
 // Vorlage: PDF-Seite 41
 === Monotone Zeitquelle und Journal-Cursor <sec-5-3-2>
@@ -112,19 +68,21 @@ Failed with result 'watchdog'
 RPI_LINK_RECOVERED
 ```
 
+Die implementierte Meldung INTERNET_ERROR ist dabei ein Sammelbezeichner für einen fehlgeschlagenen Wetterabruf. Sie identifiziert weder einen allgemeinen Netzwerkausfall noch einen Fehler des Wetterdienstes eindeutig.
+
 // Vorlage: PDF-Seite 41
 === Externe Messung bei vollständigen Neustarts <sec-5-3-3>
 
-Bei einem vollständigen Neustart kann ein lokal laufendes Messprogramm die Messung nicht fortsetzen. Deshalb wurde für die Tests P1 und P2 ein externer Rechner verwendet. Dieser prüfte die Erreichbarkeit des Raspberry Pi in Intervallen von 0,25 s per ICMP-Ping und protokollierte die Zustandswechsel UP, DOWN und erneut UP. Die externe Nichtverfügbarkeit wurde berechnet als
+Bei einem vollständigen Neustart kann ein lokal laufendes Messprogramm die Messung nicht fortsetzen. Deshalb wurde sowohl für P1, den vollständigen Spannungsverlust des Gesamtsystems, als auch für P2, die gezielt ausgelöste Kernel-Panic des Raspberry Pi, ein externer Rechner verwendet. Dieser prüfte die Erreichbarkeit des Raspberry Pi in Intervallen von 0,25 s per ICMP-Ping und protokollierte die Zustandswechsel UP, DOWN und erneut UP. Die externe Nichtverfügbarkeit wurde berechnet als
 
 #gleichung($t_"extern" = t_"UP" - t_"DOWN"$, <eq-5-2>)
 
-Diese Zeit enthält je nach Testfall die verbleibende Watchdog-Zeit, den Reset, den Bootvorgang und die Wiederherstellung der Netzwerkschnittstelle.
+Dabei ist $t_"DOWN"$ der Zeitstempel des ersten als nicht erreichbar protokollierten Zustands und $t_"UP"$ der Zeitstempel der erneut bestätigten Erreichbarkeit. Diese Zeit enthält je nach Testfall die verbleibende Watchdog-Zeit, den Reset, den Bootvorgang und die Wiederherstellung der Netzwerkschnittstelle.
 
 // Vorlage: PDF-Seite 42
 === Manuell ausgelöste Hardwarefehler <sec-5-3-4>
 
-Die manuell injizierten Hardwarefehler betrafen den Verlust des GPS-Empfängers, die Trennung der UART-Verbindung sowie die Trennung des LCD-/I2C-Pfads. In #ref(<sec-5-4>, supplement: [Abschnitt]) werden diese Testfälle als G1, C1 und L1 definiert. Die Störung wurde jeweils durch manuelles Trennen beziehungsweise Wiederverbinden ausgelöst. Die Zeitmessung beginnt deshalb teilweise mit einer Bedienerbestätigung und nicht mit dem exakten elektrischen Umschaltzeitpunkt.
+Die drei manuell injizierten Hardwarefehler werden bereits an dieser Stelle eingeführt: G1 bezeichnet das Entfernen und erneute Anschließen des USB-GPS-Empfängers. Bei C1 wird die UART-Sendeleitung vom Raspberry Pi zum STM32 getrennt und wiederverbunden. L1 bezeichnet die Trennung und Wiederverbindung der SDA-Leitung im LCD-/I2C-Pfad. Der vollständige Testkatalog mit erwartetem Verhalten und Erfolgskriterien folgt in #ref(<sec-5-4>, supplement: [Abschnitt]). Da die Eingriffe manuell erfolgten, beginnt die Zeitmessung teilweise mit einer Bedienerbestätigung und nicht mit dem exakten elektrischen Umschaltzeitpunkt.
 
 // Vorlage: PDF-Seite 42
 === Wiederholungen und statistische Kenngrößen <sec-5-3-5>
@@ -133,22 +91,27 @@ Die risikoarmen und reproduzierbaren Tests wurden jeweils fünfmal durchgeführt
 
 #gleichung($p_"Erfolg" = frac(n_"erfolgreich", n_"gesamt") dot 100 %$, <eq-5-3>)
 
+$n_"erfolgreich"$ ist die Anzahl der Durchläufe, die das festgelegte Erfolgskriterium erfüllen; $n_"gesamt"$ bezeichnet alle ausgeführten Durchläufe des betreffenden Testfalls.
+
 // Vorlage: PDF-Seite 42
 === Dokumentation und Datenintegrität <sec-5-3-6>
 
-Für jeden Durchlauf wurden Logdateien, Zustandsdateien und CSV-Messwerte in einem separaten Verzeichnis gespeichert. Nach Abschluss der Evaluation wurde das vollständige Verzeichnis archiviert. Der SHA-256-Prüfwert des finalen Archivs lautet:
+Für jeden Durchlauf wurden Logdateien, Zustandsdateien und CSV-Messwerte in einem separaten Verzeichnis gespeichert. Nach Abschluss der Evaluation wurde das vollständige Verzeichnis archiviert. Der SHA-256-Prüfwert identifiziert genau den unveränderten Inhalt dieser Archivdatei; er ersetzt jedoch nicht deren Bereitstellung. Der Prüfwert des finalen Archivs lautet:
 
 ```text
 2e5134c401f3308dd6acbd33e57b0e516af9fa5dfe1a8a47ef6e2a3b633b5bc4
 ```
 
 // Vorlage: PDF-Seite 42
-#pagebreak(weak: true)
 == Definition der Testfälle <sec-5-4>
+
+Die Testfallkennungen dienen als stabile Referenzen; ihr Buchstabe gruppiert die untersuchte Domäne: N bezeichnet hier den externen HTTPS-Wetterdatenpfad, G das GPS, C die Verbindung zwischen Raspberry Pi und STM32, H den Firmware-Hänger, S Linux-Dienste, U das UART-Protokoll, L den LCD-/I2C-Pfad und P systemweite Versorgungs- oder Plattformtests. Die Kennung N legt keine Ursache innerhalb des Wetterdatenpfads fest. Die Ziffer ist lediglich eine laufende Kennung innerhalb des Testkatalogs und beschreibt weder Schweregrad noch Ausführungsreihenfolge.
+
+Für die Fehlerinjektion bezeichnet nftables den Linux-Paketfilter, mit dem ausgehende HTTPS-Verbindungen blockiert werden. Das Signal SIGSTOP pausiert einen Prozess, ohne ihn zu beenden, und modelliert hier einen Hänger; SIGKILL beendet ihn unmittelbar und modelliert einen Absturz. Magic SysRq ist eine Kernel-Schnittstelle, über die im Test gezielt eine Kernel-Panic ausgelöst wird. Ein Power-Cycle ist das vollständige Trennen und anschließende Wiederherstellen der Versorgung.
 
 #include "../tabellen/tab-5-2.typ"
 
-Hinweis zu N2: Der Test blockiert gezielt die ausgehende HTTPS-Verbindung zur Wetterabfrage. Er prüft damit die Verfügbarkeit dieses externen Datenpfads; eine separate Diagnose allgemeiner Netzwerkkonnektivität ist nicht Gegenstand dieses Testfalls.
+Hinweis zu N2: Der Test blockiert gezielt ausgehende TCP-Verbindungen zu Port 443 und damit den HTTPS-Pfad der Wetterabfrage. Er prüft die Reaktion auf einen nicht verfügbaren Wetterdatenpfad. Der Versuch trennt weder einen lokalen beziehungsweise allgemeinen Netzwerkfehler von einem Fehler des Wetterdienstes noch untersucht er HTTP-Fehler oder ungültige API-Antworten. Entsprechend darf N2 nicht als Nachweis einer ursachenspezifischen Netzwerkdiagnose interpretiert werden.
 
 Ergänzend zum ursprünglichen Katalog wurde der Testfall P3 aufgenommen. P3a charakterisiert das Unterspannungsverhalten der NUCLEO-L432KC-Platine mit angeschlossenem LCD bei schrittweise abgesenkter VIN-Spannung; der qualitative Ablauf wurde fünfmal wiederholt. P3b dokumentiert beim Raspberry Pi den Statuswert von vcgencmd get\_throttled bei einer am Labornetzteil eingestellten Spannung von 4,50 V.
 
@@ -165,14 +128,14 @@ Alle wiederholten funktionalen Recovery-Testfälle erreichten eine Erfolgsrate v
 Für P2 wurden zwei funktional erfolgreiche Durchläufe ausgeführt. Eine verwertbare externe Zeitmessung liegt jedoch nur für Durchlauf 02 vor. Der Wert von 35 s ist deshalb ein Einzelwert und kein Mittelwert; Streuungsmaße werden für P2 nicht angegeben.
 
 // Vorlage: PDF-Seite 47
-=== N2: Ausfall und Wiederherstellung der Wetterverbindung <sec-5-5-2>
+=== N2: Blockierung und Wiederherstellung des HTTPS-Wetterdatenpfads <sec-5-5-2>
 
-Zum Auslösen des Netzwerkfehlers blockierte eine nftables-Regel ausgehende HTTPS-Verbindungen. Jeder der fünf Durchläufe führte erwartungsgemäß zum Zustand NET=ERR; weder der Netzwerk- noch der UART-Dienst musste dafür neu gestartet werden. Zwischen Aktivierung der Regel und INTERNET\_ERROR lagen im Mittel 3,14 s. Bis der STM32 den Fehlerstatus erhielt, kamen durchschnittlich 4,22 s hinzu. Die End-to-End-Fehlerweitergabe dauerte damit im Mittel 7,36 s. Nach Aufhebung der Sperre lieferte die Wetterabfrage nach durchschnittlich 5,82 s wieder gültige Daten. Weitere 4,28 s später war NET=OK an den STM32 übertragen. Für die vollständige funktionale Wiederherstellung ergibt sich ein Mittelwert von 10,10 s. Die Standardabweichung von lediglich 0,14 s weist darauf hin, dass dieser Ablauf vor allem durch die periodischen Dienstzyklen bestimmt wird.
+Zum Auslösen der Störung blockierte eine nftables-Regel ausgehende TCP-Verbindungen zu Port 443. Jeder der fünf Durchläufe führte erwartungsgemäß zum protokollierten Sammelzustand NET=ERR; weder der Wetterabruf- noch der UART-Dienst musste dafür neu gestartet werden. Zwischen Aktivierung der Regel und INTERNET\_ERROR lagen im Mittel 3,14 s. Bis der STM32 den Fehlerstatus erhielt, kamen durchschnittlich 4,22 s hinzu. Die End-to-End-Fehlerweitergabe dauerte damit im Mittel 7,36 s. Nach Aufhebung der Sperre lieferte die Wetterabfrage nach durchschnittlich 5,82 s wieder gültige Daten. Weitere 4,28 s später war NET=OK an den STM32 übertragen. Für die vollständige funktionale Wiederherstellung ergibt sich ein Mittelwert von 10,10 s. Die Standardabweichung von lediglich 0,14 s weist darauf hin, dass dieser Ablauf vor allem durch die periodischen Dienstzyklen bestimmt wird. Aufgrund des Sammelstatus lässt sich aus diesen Messungen nicht ableiten, ob der Prototyp einen Netzwerkausfall von einem Fehler des Wetterdienstes unterscheiden könnte.
 
 // Vorlage: PDF-Seite 47
 === G1: Verlust und Wiederkehr des GPS-Empfängers <sec-5-5-3>
 
-Nach dem Trennen des USB-GPS setzte der GPS-Dienst den booleschen Status have\_fix auf false. Der UART-Dienst kennzeichnete die Daten daraufhin mit GPS=ERR und MODE=LAST. Vom erkannten Geräteverlust bis zu dieser Weitergabe vergingen durchschnittlich 3,12 s. Nach dem Wiederanschluss stand ein gültiger Fix im Mittel nach 4,22 s zur Verfügung; die Umschaltung auf MODE=LIVE folgte nach weiteren 2,20 s. Insgesamt dauerte die funktionale Wiederherstellung im Mittel 6,42 s. Die Einzelwerte streuen deutlich. Ursachen sind die manuelle Fehlerinjektion, die jeweilige Phase der periodischen Dienstzyklen und der Hot-Start des GPS-Empfängers.
+Nach dem Trennen des USB-GPS setzte der GPS-Dienst den booleschen Status have\_fix auf false. Der UART-Dienst kennzeichnete die Daten daraufhin mit GPS=ERR und MODE=LAST. Vom erkannten Geräteverlust bis zu dieser Weitergabe vergingen durchschnittlich 3,12 s. Nach dem Wiederanschluss stand ein gültiger Fix im Mittel nach 4,22 s zur Verfügung; die Umschaltung auf MODE=LIVE folgte nach weiteren 2,20 s. Insgesamt dauerte die funktionale Wiederherstellung im Mittel 6,42 s. Die Einzelwerte streuen deutlich. Ursachen sind die manuelle Fehlerinjektion, die jeweilige Phase der periodischen Dienstzyklen und der Hot-Start des GPS-Empfängers, bei dem noch gespeicherte Zeit- und Bahndaten die erneute Positionsbestimmung beschleunigen können.
 
 // Vorlage: PDF-Seite 47
 === C1: Unterbrechung der Verbindung zum STM32 <sec-5-5-4>
@@ -213,7 +176,7 @@ Der vollständige Spannungsverlust wurde in drei Durchläufen untersucht. Die ex
 
 #include "../tabellen/tab-5-4.typ"
 
-Bei jedem Durchlauf änderte sich die Boot-ID; anschließend starteten alle drei Dienste automatisch. GPS-Fix, Wetterabfrage und STM32-Kommunikation wurden ohne manuellen Eingriff wiederhergestellt. Für P1-02 und P1-03 konnten zusätzlich konsistente interne Boot-Messungen ausgewertet werden. Die vollständige Anwendungsbereitschaft lag bei 21,401 s und 21,102 s nach Beginn des Linux-Bootvorgangs. Der Mittelwert der beiden gültigen internen Messungen beträgt 21,252 s. Beim ersten Lauf war die interne Zeitmessung aufgrund einer nachträglichen Korrektur der Systemzeit nicht auswertbar. Die externe Messung blieb davon unbeeinflusst. Nach den abrupten Abschaltungen führte ext4 eine automatische Bereinigung verwaister Dateisystemeinträge durch; schwerwiegende I/O- oder Dateisystemfehler wurden nicht beobachtet.
+Bei jedem Durchlauf änderte sich die Boot-ID, die eine einzelne Linux-Boot-Sitzung eindeutig kennzeichnet; anschließend starteten alle drei Dienste automatisch. GPS-Fix, Wetterabfrage und STM32-Kommunikation wurden ohne manuellen Eingriff wiederhergestellt. Für P1-02 und P1-03 konnten zusätzlich konsistente interne Boot-Messungen ausgewertet werden. Die vollständige Anwendungsbereitschaft lag bei 21,401 s und 21,102 s nach Beginn des Linux-Bootvorgangs. Der Mittelwert der beiden gültigen internen Messungen beträgt 21,252 s. Beim ersten Lauf war die interne Zeitmessung aufgrund einer nachträglichen Korrektur der Systemzeit nicht auswertbar. Die externe Messung blieb davon unbeeinflusst. Nach den abrupten Abschaltungen führte ext4 eine automatische Bereinigung verwaister Dateisystemeinträge durch; schwerwiegende I/O- oder Dateisystemfehler wurden nicht beobachtet.
 
 #vorlage("abb-5-2.png", "Extern gemessene Ausfallzeiten der drei P1-Durchläufe")
 

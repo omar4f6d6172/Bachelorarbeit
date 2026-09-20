@@ -29,9 +29,9 @@ Ausgabe: `output/pdf/bachelorarbeit-typst.pdf`. `make` oder `make watch` startet
 | `layout.typ` | Abbildungen, Tabellen, Gleichungen, Quellenverweise und automatische Nummerierung |
 | `diagramme.typ` | Acht native Architektur-, Ablauf-, Zustands- und Messdiagramme |
 | `kapitel/00.typ` | Deutsche Zusammenfassung |
-| `kapitel/01.typ` bis `07.typ` | Sieben Kapitel mit bearbeitbarem Fließtext |
+| `kapitel/01.typ` bis `07.typ` | Sechs sichtbare Hauptkapitel; `04.typ` führt das kombinierte Kapitel 3 komponentenorientiert fort |
 | `abkuerzungen.typ` | Alphabetisches Abkürzungsverzeichnis |
-| `tabellen/` | Native Tabellen; Tabelle 5.2 ist ein zusammenhängender Testkatalog |
+| `tabellen/` | Native Tabellen; Tabelle 4.2 ist ein zusammenhängender Testkatalog |
 | `abbildungen/` | Unveränderte Originalgrafiken als Referenz; nur der Terminal-Screenshot wird noch eingebunden |
 | `literatur.typ` | 28 Literatureinträge mit stabilen Labels und anklickbaren DOI-/URL-Adressen |
 | `OFFENE_ABGABEPUNKTE.md` | Fehlende Inhalte und Aufgaben vor der Abgabe, außerhalb der Arbeit |
@@ -43,7 +43,7 @@ Abbildungen und Tabellen erhalten über `vorlage` beziehungsweise `echtetabelle`
 
 Literatureinträge verwenden `#lit(<lit-01>, [Eintrag])`, Zitate beispielsweise `\[#quelle(<lit-01>), S. 13–14\]`. Angezeigt wird die aktuelle Position im Literaturverzeichnis. Die bisherige Reihenfolge und der numerische Zitierstil bleiben erhalten; es gibt keine automatische externe Quellenrecherche oder CSL-Umformatierung.
 
-Die native Tabelle 5.3 fasst Szenario und Messgröße in einer Spalte sowie Minimum und Maximum als Intervall zusammen. Messwerte und Stichprobengrößen bleiben erhalten. Im Messdiagramm zur Unterspannung sind die Zustandsklassen ordinal: Abstände und Verbindungslinien stellen keine metrischen Zustandsabstände oder gemessenen Schwellenspannungen dar.
+Die native Tabelle 4.3 fasst Szenario und Messgröße in einer Spalte sowie Minimum und Maximum als Intervall zusammen. Messwerte und Stichprobengrößen bleiben erhalten. Im Messdiagramm zur Unterspannung sind die Zustandsklassen ordinal: Abstände und Verbindungslinien stellen keine metrischen Zustandsabstände oder gemessenen Schwellenspannungen dar.
 
 ## Inhaltlicher Stand
 

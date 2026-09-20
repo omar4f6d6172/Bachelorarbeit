@@ -5,9 +5,9 @@
   (12mm, 1fr, 13mm, 16mm, 17mm, 26mm),
   ([ID], [Szenario und Hauptmessgröße], [Läufe], [Erfolg], [Mittel [s]], [Min–Max [s]],),
   (
-    [N2-F], [*HTTPS-Verbindung blockiert*\
+    [N2-F], [*HTTPS-Wetterdatenpfad blockiert*\
       Fehlerweitergabe bis NET=ERR], [5], [100 %], [7,36], [5,10–8,07],
-    [N2-R], [*HTTPS-Verbindung wiederhergestellt*\
+    [N2-R], [*HTTPS-Wetterdatenpfad freigegeben*\
       Funktionale Recovery bis NET=OK], [5], [100 %], [10,10], [9,95–10,32],
     [G1-F], [*USB-GPS getrennt*\
       GPS-Fehlerweitergabe bis MODE=LAST], [5], [100 %], [3,12], [0,04–10,85],

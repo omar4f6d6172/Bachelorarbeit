@@ -8,7 +8,7 @@
 
 #lit(<lit-03>, [Linux Kernel Documentation Project. The Linux Watchdog Driver API. #link("https://docs.kernel.org/watchdog/watchdog-api.html") (besucht am 17.07.2026).])
 
-#lit(<lit-04>, [RM0394: STM32L41xxx/42xxx/43xxx/44xxx/45xxx/46xxx Advanced Arm-based 32-bit MCUs—Reference Manual. STMicroelectronics, 2024. #link("https://www.st.com/resource/en/reference_manual/dm00151940-stm32l4x1-advanced-arm-based-32-bit-mcus-stmicroelectronics.pdf") (besucht am 17.07.2026).])
+#lit(<lit-04>, [RM0394: STM32L41xxx/42xxx/43xxx/44xxx/45xxx/46xxx Advanced Arm-based 32-bit MCUs. Reference Manual. STMicroelectronics, Rev. 5, Dezember 2024. #link("https://www.st.com/resource/en/reference_manual/rm0394-stm32l41xxx42xxx43xxx44xxx45xxx46xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf") (besucht am 19.09.2026).])
 
 #lit(<lit-05>, [Brian Randell. „System Structure for Software Fault Tolerance“. In: IEEE Transactions on Software Engineering SE-1.2 (1975), S. 220–232. doi: #link("https://doi.org/10.1109/TSE.1975.6312842")[10.1109/TSE.1975.6312842].])
 

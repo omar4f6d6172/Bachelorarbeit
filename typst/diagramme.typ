@@ -119,7 +119,7 @@
     radius: 1.5*u,
   ))
   knoten(
-    u, 44, 5, 32, 16, [Wetter-API\ HTTPS],
+    u, 44, 5, 32, 16, [Wetterdienst\ HTTP / JSON],
     fuellung: fuellung-violett,
     rand: farbe-violett,
   )
@@ -129,7 +129,7 @@
     rand: farbe-violett,
   )
   knoten(
-    u, 44, 39, 32, 21, [Raspberry Pi\ GPS, Netzwerk, UART],
+    u, 44, 39, 32, 21, [Raspberry Pi\ GPS, Wetterabruf, UART],
     fuellung: fuellung-blau,
     rand: farbe-blau,
   )
@@ -147,7 +147,7 @@
   beschriftung(u, 34, 42, 11, 5, [NMEA], groesse: 2.8)
   pfeil(u, ((58,39), (58,21)), farbe: farbe-violett)
   pfeil(u, ((63,21), (63,39)), farbe: farbe-violett)
-  beschriftung(u, 64, 26, 15, 5, [HTTPS], groesse: 3)
+  beschriftung(u, 64, 25, 27, 9, [Netzwerkpfad\ DNS / TCP / TLS], groesse: 2.6)
   pfeil(u, ((76,44), (101,44)), farbe: farbe-blau)
   pfeil(u, ((101,56), (76,56)), farbe: farbe-gruen)
   beschriftung(u, 77, 37, 23, 5, [Status], groesse: 3)
@@ -155,7 +155,7 @@
   pfeil(u, ((130,49), (137,49)), farbe: farbe-amber)
   beschriftung(u, 130, 42, 9, 5, [I2C], groesse: 2.9)
   beschriftung(
-    u, 1, 67, 79, 7, [Linux- und Netzwerkdomäne],
+    u, 1, 67, 79, 7, [Linux- und externer Datenpfad],
     groesse: 3,
     fett: true,
     farbe: farbe-blau,
@@ -180,7 +180,7 @@
     rand: farbe-amber,
   )
   knoten(
-    u, 94, 5, 30, 16, [weather-net\ .service],
+    u, 94, 5, 30, 16, [weather-net.service\ Wetterabruf],
     fuellung: fuellung-blau,
     rand: farbe-blau,
   )
@@ -219,7 +219,7 @@
     [6. Raspberry Pi durch Hardware-Watchdog neu starten],
     [5. STM32 durch IWDG zurücksetzen],
     [4. Einzelnen Linux-Dienst neu starten],
-    [3. Degradierter Betrieb und Retry: GPS, Netzwerk, Link],
+    [3. Degradierter Betrieb und Retry: GPS, Wetterdatenpfad, Link],
     [2. Lokale Reinitialisierung: I2C/LCD, UART-Zustand],
     [1. Datenrahmen verwerfen: Prüfsumme, Länge, Syntax],
   )

@@ -22,7 +22,7 @@
 
 #let echtetabelle(beschriftung, spalten, kopf, zellen, key: none) = context {
   let kapitel = counter(heading).get().first()
-  set text(size: 10pt)
+  set text(size: 11.5pt)
   set par(justify: false, leading: 0.4em)
   show figure: set block(breakable: key in (<tab-5-2>, <tab-5-3>))
   let element = figure(
@@ -49,7 +49,7 @@
   literaturzaehler.step()
   [#metadata("literature-entry")#key]
   block(breakable: false, above: 0pt, below: 8pt)[
-    #set text(size: 10.5pt)
+    #set text(size: 12pt)
     #set par(justify: false, leading: 0.5em)
     #grid(columns: (9mm, 1fr), context [\[#literaturzaehler.display()\]], body)
   ]
