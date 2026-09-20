@@ -42,11 +42,15 @@
 // Titelblatt ohne Seitenzahl und Kopfzeile.
 #align(center)[
   #set par(justify: false, leading: 0.65em)
-  #v(10mm)
-  #text(size: 18.5pt, weight: "bold")[Hochschule für Technik und Wirtschaft Berlin]
-  #v(4mm)
+  #v(2mm)
+  #image(
+    "abbildungen/htw-logo.jpg",
+    width: 85mm,
+    alt: "Logo der Hochschule für Technik und Wirtschaft Berlin",
+  )
+  #v(5mm)
   #text(size: 13pt)[Studiengang Computer Engineering]
-  #v(30mm)
+  #v(18mm)
   #text(size: 18.5pt)[Bachelorarbeit]
   #v(13mm)
   #text(size: 25pt, weight: "bold", hyphenate: false)[
